@@ -15,7 +15,7 @@ export default function MainObjectiveForm({ onContinue, formData }: FormStepProp
       text: 'Crescer perfil do zero'
     },
     {
-      emoji: '$',
+      emoji: '💰',
       text: 'Monetizar audiência'
     },
     {
