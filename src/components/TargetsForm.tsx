@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Logo from './Logo';
 import { FormStepProps } from '../types/form';
 
-export default function FamilyHistoryForm({ onContinue, formData }: FormStepProps) {
+export default function TargetsForm({ onContinue, formData }: FormStepProps) {
   const [profiles, setProfiles] = useState<string[]>(formData?.profilesToMonitor || []);
   const [currentProfile, setCurrentProfile] = useState('');
   const [maxProfiles, setMaxProfiles] = useState(3); // Default to plan 1a
@@ -10,8 +10,8 @@ export default function FamilyHistoryForm({ onContinue, formData }: FormStepProp
   // Get max profiles based on localStorage plan
   useEffect(() => {
     try {
-      const currentPlan = localStorage.getItem('current_plan');
-      switch (currentPlan) {
+      const plan = localStorage.getItem('plan');
+      switch (plan) {
         case '1a':
           setMaxProfiles(3);
           break;
@@ -26,7 +26,7 @@ export default function FamilyHistoryForm({ onContinue, formData }: FormStepProp
           break;
       }
     } catch (error) {
-      console.warn('Failed to read current_plan from localStorage:', error);
+      console.warn('Failed to read plan from localStorage:', error);
       setMaxProfiles(3);
     }
   }, []);

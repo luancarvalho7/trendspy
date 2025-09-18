@@ -21,7 +21,7 @@ import AlcoholForm from './components/AlcoholForm';
 import EatingForm from './components/EatingForm';
 import WeightChangeForm from './components/WeightChangeForm';
 import MainObjectiveForm from './components/MedicalConditionsForm';
-import FamilyHistoryForm from './components/FamilyHistoryForm';
+import TargetsForm from './components/TargetsForm';
 import StressForm from './components/StressForm';
 import LonelinessForm from './components/LonelinessForm';
 
@@ -115,9 +115,9 @@ export const formConfig: FormStep[] = [
     prevStepId: 'main_objective'
   },
   {
-    id: 'family_history',
-    component: FamilyHistoryForm,
-    title: 'Profiles to Monitor Question',
+    id: 'targets',
+    component: TargetsForm,
+    title: 'Targets to Monitor Question',
     nextStepLogic: (formData: FormData) => {
       // After family history, go to hormone therapy
       return 'hormone_therapy';
@@ -141,7 +141,7 @@ export const formConfig: FormStep[] = [
         }
       }
     },
-    prevStepId: 'family_history'
+    prevStepId: 'targets'
   },
   {
     id: 'ht1',
