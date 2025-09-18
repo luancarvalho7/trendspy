@@ -117,7 +117,7 @@ export const formConfig: FormStep[] = [
   {
     id: 'family_history',
     component: FamilyHistoryForm,
-    title: 'Family History Question',
+    title: 'Profiles to Monitor Question',
     nextStepLogic: (formData: FormData) => {
       // After family history, go to hormone therapy
       return 'hormone_therapy';

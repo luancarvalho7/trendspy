@@ -1,67 +1,74 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Logo from './Logo';
 import { FormStepProps } from '../types/form';
 
 export default function FamilyHistoryForm({ onContinue, formData }: FormStepProps) {
-  const [selectedConditions, setSelectedConditions] = useState<string[]>(formData?.familyHistory || []);
+  const [profiles, setProfiles] = useState<string[]>(formData?.profilesToMonitor || []);
+  const [currentProfile, setCurrentProfile] = useState('');
+  const [maxProfiles, setMaxProfiles] = useState(3); // Default to plan 1a
 
-  const conditions = [
-    {
-      emoji: '❤️',
-      text: 'Parent or sibling had heart attack or stroke early',
-      subtext: '(Men <55, Women <65)'
-    },
-    {
-      emoji: '🎉',
-      text: 'Any parent lived to 90 or more'
-    },
-    {
-      emoji: '🚫',
-      text: 'None of these'
+  // Get max profiles based on localStorage plan
+  useEffect(() => {
+    try {
+      const currentPlan = localStorage.getItem('current_plan');
+      switch (currentPlan) {
+        case '1a':
+          setMaxProfiles(3);
+          break;
+        case '1b':
+          setMaxProfiles(5);
+          break;
+        case '1c':
+          setMaxProfiles(Infinity); // Unlimited
+          break;
+        default:
+          setMaxProfiles(3); // Default to plan 1a
+          break;
+      }
+    } catch (error) {
+      console.warn('Failed to read current_plan from localStorage:', error);
+      setMaxProfiles(3);
     }
-  ];
+  }, []);
+
+  const handleAddProfile = () => {
+    const trimmedProfile = currentProfile.trim();
+    if (trimmedProfile && !profiles.includes(trimmedProfile) && profiles.length < maxProfiles) {
+      setProfiles([...profiles, trimmedProfile]);
+      setCurrentProfile('');
+    }
+  };
+
+  const handleRemoveProfile = (index: number) => {
+    setProfiles(profiles.filter((_, i) => i !== index));
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddProfile();
+    }
+  };
+
+  const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Remove @ symbol if user types it and allow letters, numbers, dots, underscores
+    const cleanValue = value.replace(/^@/, '');
+    if (/^[a-zA-Z0-9._]*$/.test(cleanValue) && cleanValue.length <= 30) {
+      setCurrentProfile(cleanValue);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (selectedConditions.length > 0 && onContinue) {
-      onContinue({ familyHistory: selectedConditions });
+    if (profiles.length > 0 && onContinue) {
+      onContinue({ profilesToMonitor: profiles });
     }
   };
 
-  const toggleCondition = (conditionText: string) => {
-    setSelectedConditions(prev => {
-      if (conditionText === 'None of these') {
-        // If "None of these" is being toggled
-        if (prev.includes('None of these')) {
-          // If "None of these" is already selected, deselect it
-          return prev.filter(item => item !== 'None of these');
-        } else {
-          // If "None of these" is not selected, select it and clear all other conditions
-          return ['None of these'];
-        }
-      } else {
-        // If a specific condition is being toggled
-        const withoutNone = prev.filter(item => item !== 'None of these'); // Remove "None of these" if present
-        
-        if (withoutNone.includes(conditionText)) {
-          // If the condition is already selected, deselect it
-          return withoutNone.filter(item => item !== conditionText);
-        } else {
-          // If the condition is not selected, add it
-          return [...withoutNone, conditionText];
-        }
-      }
-    });
-  };
-
-  const isValidSelection = selectedConditions.length > 0;
-
-  // Filter conditions based on selection state
-  // Hide "None of these" if any specific condition is selected
-  const hasSpecificConditions = selectedConditions.some(condition => condition !== 'None of these');
-  const displayConditions = hasSpecificConditions 
-    ? conditions.filter(condition => condition.text !== 'None of these')
-    : conditions;
+  const isValidToSubmit = profiles.length > 0;
+  const isUnlimited = maxProfiles === Infinity;
+  const maxText = isUnlimited ? 'ilimitado' : maxProfiles.toString();
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-outfit">
@@ -74,61 +81,86 @@ export default function FamilyHistoryForm({ onContinue, formData }: FormStepProp
       <div className="flex-1 flex flex-col px-6 max-w-sm mx-auto w-full">
         <form onSubmit={handleSubmit} className="flex flex-col h-full">
           {/* Question */}
-          <div className="mb-12">
-            <h1 className="text-2xl font-medium text-gray-900 text-left font-outfit leading-tight">
-              Any of these true for your family?
+          <div className="mb-8">
+            <h1 className="text-2xl font-medium text-gray-900 text-left font-outfit">
+              Adicione os perfis que você quer monitorar
             </h1>
             <p className="text-sm text-gray-600 mt-2">
-              Pick all that apply
+              Digite um @ e pressione Enter para adicionar (máximo {maxText})
             </p>
           </div>
 
-          {/* Options */}
-          <div className="flex-1 space-y-4 pb-32">
-            {displayConditions.map((condition) => (
+          {/* Input Field */}
+          <div className="mb-6">
+            <div className="flex space-x-2">
+              <div className="flex-1 relative">
+                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                  <span className="text-lg text-gray-600 font-outfit">@</span>
+                </div>
+                <input
+                  type="text"
+                  value={currentProfile}
+                  onChange={handleProfileChange}
+                  onKeyPress={handleKeyPress}
+                  className="w-full pl-10 pr-4 py-3 text-lg text-gray-900 bg-white border-2 border-[#CFCFCF] rounded-2xl transition-all duration-200 font-outfit focus:outline-none focus:border-accent hover:border-accent placeholder-gray-400"
+                  placeholder="perfil_para_monitorar"
+                  maxLength={30}
+                  disabled={!isUnlimited && profiles.length >= maxProfiles}
+                />
+              </div>
               <button
-                key={condition.text}
                 type="button"
-                onClick={() => toggleCondition(condition.text)}
-                className={`w-full py-4 px-6 rounded-2xl border-2 transition-all duration-300 font-outfit text-left shadow-sm hover:shadow-md ${
-                  selectedConditions.includes(condition.text)
-                    ? 'border-accent bg-accent/5 text-accent shadow-accent/10'
-                    : 'border-gray-200 bg-white text-gray-900 hover:border-accent hover:bg-gray-50'
+                onClick={handleAddProfile}
+                disabled={!currentProfile.trim() || profiles.includes(currentProfile.trim()) || (!isUnlimited && profiles.length >= maxProfiles)}
+                className={`px-6 py-3 rounded-2xl font-medium transition-all duration-200 ${
+                  currentProfile.trim() && !profiles.includes(currentProfile.trim()) && (isUnlimited || profiles.length < maxProfiles)
+                    ? 'bg-accent text-white hover:bg-accent/90'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <span className="text-2xl" role="img" aria-label="family history emoji">
-                      {condition.emoji}
-                    </span>
-                    <div className="text-left">
-                      <div className="text-lg leading-relaxed">
-                        {condition.text}
-                      </div>
-                      {condition.subtext && (
-                        <div className="text-sm text-gray-500 mt-1">
-                          {condition.subtext}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  {selectedConditions.includes(condition.text) && (
-                    <svg className="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  )}
-                </div>
+                +
               </button>
-            ))}
+            </div>
+          </div>
+
+          {/* Added Profiles */}
+          <div className="flex-1">
+            {profiles.length > 0 && (
+              <div className="space-y-3">
+                <div className="text-sm text-gray-600">
+                  Perfis adicionados ({profiles.length}/{maxText}):
+                </div>
+                <div className="space-y-2">
+                  {profiles.map((profile, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 bg-accent/5 border border-accent/20 rounded-xl"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <span className="text-accent font-medium">@</span>
+                        <span className="text-accent font-medium">{profile}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveProfile(index)}
+                        className="text-red-500 hover:text-red-700 transition-colors p-1"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Bottom Section with Continue Button */}
           <div className="fixed bottom-[50px] left-0 right-0 px-6 max-w-sm mx-auto w-full">
             <button
               type="submit"
-              disabled={!isValidSelection}
+              disabled={!isValidToSubmit}
               className={`w-full py-4 px-6 rounded-full font-medium text-white text-lg transition-all duration-200 font-outfit ${
-                isValidSelection
+                isValidToSubmit
                   ? 'bg-black hover:bg-gray-800 active:scale-95'
                   : 'bg-gray-300 cursor-not-allowed'
               }`}

@@ -32,6 +32,7 @@ export interface FormData {
   eatingHabits?: string;
   mainObjective?: string;
   familyHistory?: string[];
+  profilesToMonitor?: string[];
   lonelinessFactors?: string[];
   [key: string]: any; // Allow for additional fields as we add more questions
 }
