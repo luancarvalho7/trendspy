@@ -1,11 +1,13 @@
 export interface FormData {
   age?: string;
-  sex?: string;
+  sex?: string; // Keep for backward compatibility
+  niches?: string[];
   heightUnit?: 'feet' | 'inches' | 'centimeters';
   heightFeet?: string;
   heightInches?: string;
   heightTotalInches?: string;
   heightCentimeters?: string;
+  hasWebsite?: string;
   weight?: string;
   weightChange?: string;
   pregnancyStatus?: string;

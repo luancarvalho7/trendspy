@@ -3,7 +3,7 @@ import AccountNameForm from './components/AccountNameForm';
 import SocialNetworkTypeForm from './components/SocialNetworkTypeForm';
 import InstagramHandleForm from './components/InstagramHandleForm';
 import WebsiteLinkForm from './components/WebsiteLinkForm';
-import SexForm from './components/SexForm';
+import NicheForm from './components/NicheForm';
 import HormoneTherapyForm from './components/HormoneTherapyForm';
 import HT1Form from './components/HT1Form';
 import HT2Form from './components/HT2Form';
@@ -77,9 +77,9 @@ export const formConfig: FormStep[] = [
     prevStepId: 'has_website'
   },
   {
-    id: 'sex',
-    component: SexForm,
-    title: 'Sex Assignment Question',
+    id: 'niches',
+    component: NicheForm,
+    title: 'Niche Selection Question',
     nextStepLogic: (formData: FormData) => {
       // Always go to medical conditions next
       return 'medical_conditions';
@@ -101,7 +101,7 @@ export const formConfig: FormStep[] = [
       // After medical conditions, go to hormone therapy
       return 'family_history';
     },
-    prevStepId: 'sex'
+    prevStepId: 'niches'
   },
   {
     id: 'family_history',
@@ -123,7 +123,7 @@ export const formConfig: FormStep[] = [
         return 'ht1'; // Go to hormone therapy questions
       } else {
         // If No to hormone therapy, check if female for pregnancy question
-        if (formData.sex === 'Female') {
+        if (formData.niches?.includes('Female') || formData.sex === 'Female') {
           return 'pregnancy';
         } else {
           return 'walking'; // Go to walking question for males
@@ -170,7 +170,7 @@ export const formConfig: FormStep[] = [
     nextStepLogic: (formData: FormData) => {
       // End of hormone therapy section
       // After completing all HT questions, check if female for pregnancy
-      if (formData.sex === 'Female') {
+      if (formData.niches?.includes('Female') || formData.sex === 'Female') {
         return 'pregnancy';
       } else {
         return 'walking'; // Go to walking question for males
@@ -207,7 +207,7 @@ export const formConfig: FormStep[] = [
     },
     prevStepId: (formData: FormData) => {
       // Dynamic previous step based on gender and hormone therapy
-      if (formData.sex === 'Female') {
+      if (formData.niches?.includes('Female') || formData.sex === 'Female') {
         return 'pregnancy';
       } else {
         // Male - could come from hormone_therapy (No) or from completed HT flow
