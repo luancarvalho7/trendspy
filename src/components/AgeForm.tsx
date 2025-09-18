@@ -1,26 +1,50 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import Logo from './Logo';
 import { FormStepProps } from '../types/form';
 
 export default function AgeForm({ onContinue, formData }: FormStepProps) {
-  const [age, setAge] = useState(formData?.age || '');
+  // Get initial value from localStorage or formData
+  const getInitialAccountName = () => {
+    if (formData?.accountName) {
+      return formData.accountName;
+    }
+    
+    try {
+      const storedUserName = localStorage.getItem('user_name');
+      if (storedUserName) {
+        // Check if we need to split the name
+        const firstName = storedUserName.includes(' ') ? storedUserName.split(' ')[0] : storedUserName;
+        return `Trends de ${firstName}`;
+      }
+    } catch (error) {
+      console.warn('Failed to read from localStorage:', error);
+    }
+    
+    return '';
+  };
+
+  const [accountName, setAccountName] = useState(getInitialAccountName());
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (age.trim() && onContinue) {
-      onContinue({ age });
+    if (accountName.trim() && isValidAccountName() && onContinue) {
+      onContinue({ accountName: accountName.trim() });
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAccountNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    // Only allow numbers
-    if (/^\d*$/.test(value) && (value === '' || (parseInt(value) >= 0 && parseInt(value) <= 150))) {
-      setAge(value);
+    // Allow letters, numbers, spaces, and basic punctuation, but limit length
+    if (value.length <= 50) {
+      setAccountName(value);
     }
   };
 
-  const isValidAge = age && parseInt(age) >= 1 && parseInt(age) <= 150;
+  const isValidAccountName = () => {
+    const trimmed = accountName.trim();
+    return trimmed.length >= 2 && trimmed.length <= 50;
+  };
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-outfit">
@@ -35,7 +59,7 @@ export default function AgeForm({ onContinue, formData }: FormStepProps) {
           {/* Question */}
           <div className="mb-8">
             <h1 className="text-2xl font-medium text-gray-900 text-left font-outfit">
-              How old are you today?
+              Escolha um nome para sua conta:
             </h1>
           </div>
 
@@ -43,13 +67,12 @@ export default function AgeForm({ onContinue, formData }: FormStepProps) {
           <div className="flex-1">
             <input
               type="text"
-              value={age}
-              onChange={handleInputChange}
+              value={accountName}
+              onChange={handleAccountNameChange}
               className="w-full px-4 py-4 text-lg text-gray-900 bg-white border-2 border-[#CFCFCF] rounded-2xl transition-all duration-200 font-outfit focus:outline-none focus:border-accent hover:border-accent placeholder-gray-400"
-              maxLength={3}
-              inputMode="numeric"
+              maxLength={50}
               autoFocus
-              placeholder="Enter your age"
+              placeholder="Digite o nome da sua conta"
             />
           </div>
 
@@ -57,9 +80,9 @@ export default function AgeForm({ onContinue, formData }: FormStepProps) {
           <div className="fixed bottom-[50px] left-0 right-0 px-6 max-w-sm mx-auto w-full">
             <button
               type="submit"
-              disabled={!isValidAge}
+              disabled={!isValidAccountName()}
               className={`w-full py-4 px-6 rounded-full font-medium text-white text-lg transition-all duration-200 font-outfit ${
-                isValidAge
+                isValidAccountName()
                   ? 'bg-black hover:bg-gray-800 active:scale-95'
                   : 'bg-gray-300 cursor-not-allowed'
               }`}
