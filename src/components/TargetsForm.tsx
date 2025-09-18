@@ -130,7 +130,7 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
                 <div className="text-sm text-gray-600">
                   Perfis adicionados ({profiles.length}/{maxText}):
                 </div>
-                <div className="space-y-2">
+                <div className={`space-y-2 ${isUnlimited ? 'max-h-64 overflow-y-auto pr-2' : ''}`}>
                   {profiles.map((profile, index) => (
                     <div
                       key={index}
