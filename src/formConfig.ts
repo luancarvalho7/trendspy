@@ -111,7 +111,7 @@ export const formConfig: FormStep[] = [
     nextStepLogic: (formData: FormData) => {
       // After profile monitoring, check if they know which profiles to monitor
       if (formData.profileMonitoring === 'Sim') {
-      return 'family_history';
+        return 'targets';
       } else {
         // If they don't know which profiles to monitor, skip targets and go to hormone therapy
         return 'hormone_therapy';
