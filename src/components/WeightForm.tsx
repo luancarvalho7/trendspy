@@ -49,8 +49,6 @@ export default function WeightForm({ onContinue, formData }: FormStepProps) {
               </h1>
             </div>
           </div>
-            </h1>
-          </div>
 
           {/* Input Field */}
           <div className="flex-1">
