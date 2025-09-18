@@ -25,31 +25,31 @@ import LonelinessForm from './components/LonelinessForm';
 
 export const formConfig: FormStep[] = [
   {
-    id: 'age',
+    id: 'account_name',
     component: AccountNameForm,
     title: 'Account Name Question',
     nextStepLogic: (formData: FormData) => {
       // Simple linear progression to sex question
-      return 'height';
+      return 'social_network_type';
     }
   },
   {
-    id: 'height',
+    id: 'social_network_type',
     component: SocialNetworkTypeForm,
     title: 'Social Network Type Question',
     nextStepLogic: (formData: FormData) => {
-      return 'weight';
+      return 'instagram_handle';
     },
-    prevStepId: 'age'
+    prevStepId: 'account_name'
   },
   {
-    id: 'weight',
+    id: 'instagram_handle',
     component: InstagramHandleForm,
     title: 'Instagram Handle Question',
     nextStepLogic: (formData: FormData) => {
       return 'weight_change';
     },
-    prevStepId: 'height'
+    prevStepId: 'social_network_type'
   },
   {
     id: 'weight_change',
@@ -58,7 +58,7 @@ export const formConfig: FormStep[] = [
     nextStepLogic: (formData: FormData) => {
       return 'sex';
     },
-    prevStepId: 'weight'
+    prevStepId: 'instagram_handle'
   },
   {
     id: 'sex',
