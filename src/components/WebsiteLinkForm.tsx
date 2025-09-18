@@ -5,13 +5,6 @@ import { FormStepProps } from '../types/form';
 export default function WebsiteLinkForm({ onContinue, formData }: FormStepProps) {
   const [websiteLink, setWebsiteLink] = useState(formData?.websiteLink || 'https://');
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (websiteLink.trim() && isValidWebsiteLink() && onContinue) {
-      onContinue({ websiteLink: websiteLink.trim() });
-    }
-  };
-
   const handleWebsiteLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     
@@ -34,14 +27,14 @@ export default function WebsiteLinkForm({ onContinue, formData }: FormStepProps)
 
   const isValidWebsiteLink = () => {
     const trimmed = websiteLink.trim();
-    if (trimmed.length <= 8) return false; // Must be more than just "https://"
+    if (trimmed.length <= 10) return false; // Must be more than just "https://"
     
     // Basic URL validation - must start with https:// and have valid domain
-    const urlPattern = /^https:\/\/([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/i;
+    const urlPattern = /^https:\/\/[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*([\/\w\.\-\?\&\%\#\=]*)*\/?$/i;
     return urlPattern.test(trimmed);
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (websiteLink.trim() && isValidWebsiteLink() && onContinue) {
       onContinue({ websiteLink: websiteLink.trim() });
@@ -57,7 +50,7 @@ export default function WebsiteLinkForm({ onContinue, formData }: FormStepProps)
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col px-6 max-w-sm mx-auto w-full">
-        <form onSubmit={handleFormSubmit} className="flex flex-col h-full">
+        <form onSubmit={handleSubmit} className="flex flex-col h-full">
           {/* Question */}
           <div className="mb-8">
             <h1 className="text-2xl font-medium text-gray-900 text-left font-outfit">
