@@ -5,6 +5,7 @@ import InstagramHandleForm from './components/InstagramHandleForm';
 import WebsiteLinkForm from './components/WebsiteLinkForm';
 import NicheForm from './components/NicheForm';
 import ProfileMonitoringForm from './components/ProfileMonitoringForm';
+import TargetsForm from './components/TargetsForm';
 import HormoneTherapyForm from './components/HormoneTherapyForm';
 import HT1Form from './components/HT1Form';
 import HT2Form from './components/HT2Form';
@@ -21,7 +22,6 @@ import AlcoholForm from './components/AlcoholForm';
 import EatingForm from './components/EatingForm';
 import WeightChangeForm from './components/WeightChangeForm';
 import MainObjectiveForm from './components/MedicalConditionsForm';
-import TargetsForm from './components/TargetsForm';
 import StressForm from './components/StressForm';
 import LonelinessForm from './components/LonelinessForm';
 
@@ -109,8 +109,13 @@ export const formConfig: FormStep[] = [
     component: ProfileMonitoringForm,
     title: 'Profile Monitoring Question',
     nextStepLogic: (formData: FormData) => {
-      // After profile monitoring, go to family history
+      // After profile monitoring, check if they know which profiles to monitor
+      if (formData.profileMonitoring === 'Sim') {
       return 'family_history';
+      } else {
+        // If they don't know which profiles to monitor, skip targets and go to hormone therapy
+        return 'hormone_therapy';
+      }
     },
     prevStepId: 'main_objective'
   },
@@ -119,7 +124,7 @@ export const formConfig: FormStep[] = [
     component: TargetsForm,
     title: 'Targets to Monitor Question',
     nextStepLogic: (formData: FormData) => {
-      // After family history, go to hormone therapy
+      // After targets, go to hormone therapy
       return 'hormone_therapy';
     },
     prevStepId: 'profile_monitoring'
