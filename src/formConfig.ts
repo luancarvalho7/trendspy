@@ -48,7 +48,7 @@ export const formConfig: FormStep[] = [
     component: InstagramHandleForm,
     title: 'Instagram Handle Question',
     nextStepLogic: (formData: FormData) => {
-      return 'weight_change';
+      return 'has_website';
     },
     prevStepId: 'social_network_type'
   },
