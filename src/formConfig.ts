@@ -61,8 +61,8 @@ export const formConfig: FormStep[] = [
       if (formData.hasWebsite === 'Sim') {
         return 'website_link';
       } else {
-        // If no website, continue to sex question
-        return 'sex';
+        // If no website, continue to niches question
+        return 'niches';
       }
     },
     prevStepId: 'instagram_handle'
@@ -72,7 +72,7 @@ export const formConfig: FormStep[] = [
     component: WebsiteLinkForm,
     title: 'Website Link Question',
     nextStepLogic: (formData: FormData) => {
-      return 'sex';
+      return 'niches';
     },
     prevStepId: 'has_website'
   },
@@ -81,8 +81,8 @@ export const formConfig: FormStep[] = [
     component: NicheForm,
     title: 'Niche Selection Question',
     nextStepLogic: (formData: FormData) => {
-      // Always go to medical conditions next
-      return 'medical_conditions';
+      // Always go to main objective next
+      return 'main_objective';
     },
     prevStepId: (formData: FormData) => {
       // Dynamic previous step - could come from has_website (No) or website_link (Yes)
