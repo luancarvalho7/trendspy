@@ -3,7 +3,7 @@ import Logo from './Logo';
 import { FormStepProps } from '../types/form';
 
 export default function WebsiteLinkForm({ onContinue, formData }: FormStepProps) {
-  const [websiteLink, setWebsiteLink] = useState(formData?.websiteLink || '');
+  const [websiteLink, setWebsiteLink] = useState(formData?.websiteLink || 'https://');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -14,31 +14,37 @@ export default function WebsiteLinkForm({ onContinue, formData }: FormStepProps)
 
   const handleWebsiteLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setWebsiteLink(value);
+    
+    // If user types or pastes https://, remove the duplicate
+    if (value.startsWith('https://https://')) {
+      setWebsiteLink(value.replace('https://https://', 'https://'));
+    } else if (value.startsWith('http://https://')) {
+      setWebsiteLink(value.replace('http://https://', 'https://'));
+    } else if (value.startsWith('https://http://')) {
+      setWebsiteLink(value.replace('https://http://', 'https://'));
+    } else {
+      // Ensure it always starts with https://
+      if (!value.startsWith('https://')) {
+        setWebsiteLink('https://' + value.replace(/^https?:\/\//, ''));
+      } else {
+        setWebsiteLink(value);
+      }
+    }
   };
 
   const isValidWebsiteLink = () => {
     const trimmed = websiteLink.trim();
-    if (trimmed.length < 3) return false;
+    if (trimmed.length <= 8) return false; // Must be more than just "https://"
     
-    // Basic URL validation - check if it starts with http(s) or is a valid domain
-    const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/i;
+    // Basic URL validation - must start with https:// and have valid domain
+    const urlPattern = /^https:\/\/([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/i;
     return urlPattern.test(trimmed);
-  };
-
-  const formatWebsiteLink = (link: string) => {
-    const trimmed = link.trim();
-    if (trimmed && !trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
-      return `https://${trimmed}`;
-    }
-    return trimmed;
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (websiteLink.trim() && isValidWebsiteLink() && onContinue) {
-      const formattedLink = formatWebsiteLink(websiteLink);
-      onContinue({ websiteLink: formattedLink });
+      onContinue({ websiteLink: websiteLink.trim() });
     }
   };
 
@@ -61,19 +67,14 @@ export default function WebsiteLinkForm({ onContinue, formData }: FormStepProps)
 
           {/* Input Field */}
           <div className="flex-1">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                <span className="text-lg text-gray-600 font-outfit">🌐</span>
-              </div>
-              <input
-                type="url"
-                value={websiteLink}
-                onChange={handleWebsiteLinkChange}
-                className="w-full pl-12 pr-4 py-4 text-lg text-gray-900 bg-white border-2 border-[#CFCFCF] rounded-2xl transition-all duration-200 font-outfit focus:outline-none focus:border-accent hover:border-accent placeholder-gray-400"
-                autoFocus
-                placeholder="www.seusite.com.br"
-              />
-            </div>
+            <input
+              type="url"
+              value={websiteLink}
+              onChange={handleWebsiteLinkChange}
+              className="w-full px-4 py-4 text-lg text-gray-900 bg-white border-2 border-[#CFCFCF] rounded-2xl transition-all duration-200 font-outfit focus:outline-none focus:border-accent hover:border-accent placeholder-gray-400"
+              autoFocus
+              placeholder="https://www.seusite.com.br"
+            />
           </div>
 
           {/* Bottom Section with Button */}
