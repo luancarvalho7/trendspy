@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Logo from './Logo';
 import { FormStepProps } from '../types/form';
 
-export default function WeightForm({ onContinue, formData }: FormStepProps) {
+export default function InstagramHandleForm({ onContinue, formData }: FormStepProps) {
   const [instagramHandle, setInstagramHandle] = useState(formData?.instagramHandle || '');
 
   const handleSubmit = (e: React.FormEvent) => {

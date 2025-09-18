@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Logo from './Logo';
 import { FormStepProps } from '../types/form';
 
-export default function HeightForm({ onContinue, formData }: FormStepProps) {
+export default function SocialNetworkTypeForm({ onContinue, formData }: FormStepProps) {
   const [selectedType, setSelectedType] = useState(formData?.socialNetworkType || '');
 
   const handleTypeSelection = (type: string) => {

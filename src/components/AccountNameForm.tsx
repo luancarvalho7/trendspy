@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import Logo from './Logo';
 import { FormStepProps } from '../types/form';
 
-export default function AgeForm({ onContinue, formData }: FormStepProps) {
+export default function AccountNameForm({ onContinue, formData }: FormStepProps) {
   // Get initial value from localStorage or formData
   const getInitialAccountName = () => {
     if (formData?.accountName) {

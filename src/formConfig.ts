@@ -1,7 +1,7 @@
 import { FormStep, FormData } from './types/form';
-import AgeForm from './components/AgeForm';
-import HeightForm from './components/HeightForm';
-import WeightForm from './components/WeightForm';
+import AccountNameForm from './components/AccountNameForm';
+import SocialNetworkTypeForm from './components/SocialNetworkTypeForm';
+import InstagramHandleForm from './components/InstagramHandleForm';
 import SexForm from './components/SexForm';
 import HormoneTherapyForm from './components/HormoneTherapyForm';
 import HT1Form from './components/HT1Form';
@@ -26,8 +26,8 @@ import LonelinessForm from './components/LonelinessForm';
 export const formConfig: FormStep[] = [
   {
     id: 'age',
-    component: AgeForm,
-    title: 'Age Question',
+    component: AccountNameForm,
+    title: 'Account Name Question',
     nextStepLogic: (formData: FormData) => {
       // Simple linear progression to sex question
       return 'height';
@@ -35,8 +35,8 @@ export const formConfig: FormStep[] = [
   },
   {
     id: 'height',
-    component: HeightForm,
-    title: 'Height Question',
+    component: SocialNetworkTypeForm,
+    title: 'Social Network Type Question',
     nextStepLogic: (formData: FormData) => {
       return 'weight';
     },
@@ -44,8 +44,8 @@ export const formConfig: FormStep[] = [
   },
   {
     id: 'weight',
-    component: WeightForm,
-    title: 'Weight Question',
+    component: InstagramHandleForm,
+    title: 'Instagram Handle Question',
     nextStepLogic: (formData: FormData) => {
       return 'weight_change';
     },
