@@ -38,37 +38,32 @@ export default function WeightForm({ onContinue, formData }: FormStepProps) {
         <form onSubmit={handleSubmit} className="flex flex-col h-full">
           {/* Question */}
           <div className="mb-8">
-            <div className="flex items-center space-x-3 mb-4">
-              <img 
-                src="https://cdn.iconscout.com/icon/free/png-256/free-instagram-logo-icon-svg-download-png-1646407.png" 
-                alt="Instagram" 
-                className="w-8 h-8"
-              />
-              <h1 className="text-2xl font-medium text-gray-900 font-outfit">
-                Qual o @ do seu perfil no instagram?
-              </h1>
-            </div>
+            <h1 className="text-2xl font-medium text-gray-900 text-left font-outfit">
+              Qual o @ do seu perfil no instagram?
+            </h1>
           </div>
 
           {/* Input Field */}
           <div className="flex-1">
             <div className="relative">
               <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                <img 
+                  src="https://cdn.iconscout.com/icon/free/png-256/free-instagram-logo-icon-svg-download-png-1646407.png" 
+                  alt="Instagram" 
+                  className="w-5 h-5 mr-2"
+                />
                 <span className="text-lg text-gray-600 font-outfit">@</span>
               </div>
               <input
                 type="text"
                 value={instagramHandle}
                 onChange={handleInstagramChange}
-                className="w-full pl-10 pr-4 py-4 text-lg text-gray-900 bg-white border-2 border-[#CFCFCF] rounded-2xl transition-all duration-200 font-outfit focus:outline-none focus:border-accent hover:border-accent placeholder-gray-400"
+                className="w-full pl-16 pr-4 py-4 text-lg text-gray-900 bg-white border-2 border-[#CFCFCF] rounded-2xl transition-all duration-200 font-outfit focus:outline-none focus:border-accent hover:border-accent placeholder-gray-400"
                 maxLength={30}
                 autoFocus
                 placeholder="seu_usuario_instagram"
               />
             </div>
-            <p className="text-sm text-gray-500 mt-2">
-              Digite seu nome de usuário do Instagram (sem o @)
-            </p>
           </div>
 
           {/* Bottom Section with Button */}
