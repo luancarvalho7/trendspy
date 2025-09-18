@@ -5,6 +5,8 @@ import { FormStepProps } from '../types/form';
 export default function TargetsForm({ onContinue, formData }: FormStepProps) {
   const [profiles, setProfiles] = useState<string[]>(formData?.profilesToMonitor || []);
   const [currentProfile, setCurrentProfile] = useState('');
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingValue, setEditingValue] = useState('');
   const [maxProfiles, setMaxProfiles] = useState(3); // Default to plan 1a
 
   // Get max profiles based on localStorage plan
@@ -41,8 +43,52 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
 
   const handleRemoveProfile = (index: number) => {
     setProfiles(profiles.filter((_, i) => i !== index));
+    // Cancel editing if we're removing the profile being edited
+    if (editingIndex === index) {
+      setEditingIndex(null);
+      setEditingValue('');
+    }
   };
 
+  const handleEditProfile = (index: number) => {
+    setEditingIndex(index);
+    setEditingValue(profiles[index]);
+  };
+
+  const handleSaveEdit = (index: number) => {
+    const trimmedValue = editingValue.trim();
+    if (trimmedValue && !profiles.some((profile, i) => i !== index && profile === trimmedValue)) {
+      const updatedProfiles = [...profiles];
+      updatedProfiles[index] = trimmedValue;
+      setProfiles(updatedProfiles);
+    }
+    setEditingIndex(null);
+    setEditingValue('');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingIndex(null);
+    setEditingValue('');
+  };
+
+  const handleEditKeyPress = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSaveEdit(index);
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      handleCancelEdit();
+    }
+  };
+
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Remove @ symbol if user types it and allow letters, numbers, dots, underscores
+    const cleanValue = value.replace(/^@/, '');
+    if (/^[a-zA-Z0-9._]*$/.test(cleanValue) && cleanValue.length <= 30) {
+      setEditingValue(cleanValue);
+    }
+  };
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -136,17 +182,67 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
                       key={index}
                       className="flex items-center justify-between p-3 bg-accent/5 border border-accent/20 rounded-xl"
                     >
-                      <div className="flex items-center space-x-2">
-                        <span className="text-accent font-medium">@</span>
-                        <span className="text-accent font-medium">{profile}</span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveProfile(index)}
-                        className="text-red-500 hover:text-red-700 transition-colors p-1"
-                      >
-                        ×
-                      </button>
+                      {editingIndex === index ? (
+                        // Edit mode
+                        <>
+                          <div className="flex items-center space-x-2 flex-1 mr-2">
+                            <span className="text-accent font-medium">@</span>
+                            <input
+                              type="text"
+                              value={editingValue}
+                              onChange={handleEditChange}
+                              onKeyDown={(e) => handleEditKeyPress(e, index)}
+                              className="flex-1 px-2 py-1 text-accent font-medium bg-white border border-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-accent/20"
+                              maxLength={30}
+                              autoFocus
+                            />
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <button
+                              type="button"
+                              onClick={() => handleSaveEdit(index)}
+                              className="text-green-500 hover:text-green-700 transition-colors p-1 text-sm"
+                              title="Save"
+                            >
+                              ✓
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleCancelEdit}
+                              className="text-gray-500 hover:text-gray-700 transition-colors p-1 text-sm"
+                              title="Cancel"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        // Display mode
+                        <>
+                          <div className="flex items-center space-x-2 flex-1">
+                            <span className="text-accent font-medium">@</span>
+                            <span className="text-accent font-medium">{profile}</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <button
+                              type="button"
+                              onClick={() => handleEditProfile(index)}
+                              className="text-blue-500 hover:text-blue-700 transition-colors p-1 text-sm"
+                              title="Edit"
+                            >
+                              ✏️
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveProfile(index)}
+                              className="text-red-500 hover:text-red-700 transition-colors p-1"
+                              title="Remove"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>
