@@ -29,7 +29,7 @@ export interface FormData {
   stressLevel?: string;
   alcoholConsumption?: string;
   eatingHabits?: string;
-  medicalConditions?: string[];
+  mainObjective?: string;
   familyHistory?: string[];
   lonelinessFactors?: string[];
   [key: string]: any; // Allow for additional fields as we add more questions

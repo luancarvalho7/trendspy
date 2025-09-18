@@ -19,7 +19,7 @@ import SnoringForm from './components/SnoringForm';
 import AlcoholForm from './components/AlcoholForm';
 import EatingForm from './components/EatingForm';
 import WeightChangeForm from './components/WeightChangeForm';
-import MedicalConditionsForm from './components/MedicalConditionsForm';
+import MainObjectiveForm from './components/MedicalConditionsForm';
 import FamilyHistoryForm from './components/FamilyHistoryForm';
 import StressForm from './components/StressForm';
 import LonelinessForm from './components/LonelinessForm';
@@ -94,9 +94,9 @@ export const formConfig: FormStep[] = [
     }
   },
   {
-    id: 'medical_conditions',
-    component: MedicalConditionsForm,
-    title: 'Medical Conditions Question',
+    id: 'main_objective',
+    component: MainObjectiveForm,
+    title: 'Main Objective Question',
     nextStepLogic: (formData: FormData) => {
       // After medical conditions, go to hormone therapy
       return 'family_history';
@@ -111,7 +111,7 @@ export const formConfig: FormStep[] = [
       // After family history, go to hormone therapy
       return 'hormone_therapy';
     },
-    prevStepId: 'medical_conditions'
+    prevStepId: 'main_objective'
   },
   {
     id: 'hormone_therapy',
