@@ -2,6 +2,7 @@ import { FormStep, FormData } from './types/form';
 import AccountNameForm from './components/AccountNameForm';
 import SocialNetworkTypeForm from './components/SocialNetworkTypeForm';
 import InstagramHandleForm from './components/InstagramHandleForm';
+import WebsiteLinkForm from './components/WebsiteLinkForm';
 import SexForm from './components/SexForm';
 import HormoneTherapyForm from './components/HormoneTherapyForm';
 import HT1Form from './components/HT1Form';
@@ -52,13 +53,28 @@ export const formConfig: FormStep[] = [
     prevStepId: 'social_network_type'
   },
   {
-    id: 'weight_change',
+    id: 'has_website',
     component: WeightChangeForm,
-    title: 'Weight Change Question',
+    title: 'Website Availability Question',
+    nextStepLogic: (formData: FormData) => {
+      // If user has a website, ask for the link
+      if (formData.hasWebsite === 'Sim') {
+        return 'website_link';
+      } else {
+        // If no website, continue to sex question
+        return 'sex';
+      }
+    },
+    prevStepId: 'instagram_handle'
+  },
+  {
+    id: 'website_link',
+    component: WebsiteLinkForm,
+    title: 'Website Link Question',
     nextStepLogic: (formData: FormData) => {
       return 'sex';
     },
-    prevStepId: 'instagram_handle'
+    prevStepId: 'has_website'
   },
   {
     id: 'sex',
@@ -68,7 +84,14 @@ export const formConfig: FormStep[] = [
       // Always go to medical conditions next
       return 'medical_conditions';
     },
-    prevStepId: 'weight_change'
+    prevStepId: (formData: FormData) => {
+      // Dynamic previous step - could come from has_website (No) or website_link (Yes)
+      if (formData.hasWebsite === 'Sim') {
+        return 'website_link';
+      } else {
+        return 'has_website';
+      }
+    }
   },
   {
     id: 'medical_conditions',

@@ -3,22 +3,19 @@ import Logo from './Logo';
 import { FormStepProps } from '../types/form';
 
 export default function WeightChangeForm({ onContinue, formData }: FormStepProps) {
-  const [selectedChange, setSelectedChange] = useState(formData?.weightChange || '');
+  const [hasWebsite, setHasWebsite] = useState(formData?.hasWebsite || '');
 
   const options = [
-    'Stayed the same',
-    'Lost weight on purpose',
-    'Gained weight on purpose (muscle, etc.)',
-    'Lost weight without trying',
-    'Gained weight without meaning to'
+    'Sim',
+    'Não'
   ];
 
-  const handleChangeSelection = (change: string) => {
-    setSelectedChange(change);
+  const handleWebsiteSelection = (answer: string) => {
+    setHasWebsite(answer);
     // Auto-forward after a brief delay for visual feedback
     setTimeout(() => {
       if (onContinue) {
-        onContinue({ weightChange: change });
+        onContinue({ hasWebsite: answer });
       }
     }, 300);
   };
@@ -36,11 +33,8 @@ export default function WeightChangeForm({ onContinue, formData }: FormStepProps
           {/* Question */}
           <div className="mb-12">
             <h1 className="text-2xl font-medium text-gray-900 text-left font-outfit leading-tight">
-              What happened to your weight in the past year?
+              Você tem um site?
             </h1>
-            <p className="text-sm text-gray-600 mt-2">
-              Pick one
-            </p>
           </div>
 
           {/* Options */}
@@ -49,9 +43,9 @@ export default function WeightChangeForm({ onContinue, formData }: FormStepProps
               <button
                 key={option}
                 type="button"
-                onClick={() => handleChangeSelection(option)}
+                onClick={() => handleWebsiteSelection(option)}
                 className={`w-full py-4 px-6 text-lg rounded-2xl border-2 transition-all duration-300 font-outfit text-left shadow-sm hover:shadow-md ${
-                  selectedChange === option
+                  hasWebsite === option
                     ? 'border-accent bg-accent/5 text-accent shadow-accent/10'
                     : 'border-gray-200 bg-white text-gray-900 hover:border-accent hover:bg-gray-50'
                 }`}
