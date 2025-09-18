@@ -2,6 +2,7 @@ export interface FormData {
   age?: string;
   sex?: string; // Keep for backward compatibility
   niches?: string[];
+  profileMonitoring?: string;
   heightUnit?: 'feet' | 'inches' | 'centimeters';
   heightFeet?: string;
   heightInches?: string;

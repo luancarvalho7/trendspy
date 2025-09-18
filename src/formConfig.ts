@@ -4,6 +4,7 @@ import SocialNetworkTypeForm from './components/SocialNetworkTypeForm';
 import InstagramHandleForm from './components/InstagramHandleForm';
 import WebsiteLinkForm from './components/WebsiteLinkForm';
 import NicheForm from './components/NicheForm';
+import ProfileMonitoringForm from './components/ProfileMonitoringForm';
 import HormoneTherapyForm from './components/HormoneTherapyForm';
 import HT1Form from './components/HT1Form';
 import HT2Form from './components/HT2Form';
@@ -98,10 +99,20 @@ export const formConfig: FormStep[] = [
     component: MainObjectiveForm,
     title: 'Main Objective Question',
     nextStepLogic: (formData: FormData) => {
-      // After medical conditions, go to hormone therapy
-      return 'family_history';
+      // After main objective, go to profile monitoring
+      return 'profile_monitoring';
     },
     prevStepId: 'niches'
+  },
+  {
+    id: 'profile_monitoring',
+    component: ProfileMonitoringForm,
+    title: 'Profile Monitoring Question',
+    nextStepLogic: (formData: FormData) => {
+      // After profile monitoring, go to family history
+      return 'family_history';
+    },
+    prevStepId: 'main_objective'
   },
   {
     id: 'family_history',
@@ -111,7 +122,7 @@ export const formConfig: FormStep[] = [
       // After family history, go to hormone therapy
       return 'hormone_therapy';
     },
-    prevStepId: 'main_objective'
+    prevStepId: 'profile_monitoring'
   },
   {
     id: 'hormone_therapy',
