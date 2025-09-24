@@ -72,11 +72,18 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
   };
 
   const handleAddSuggestion = (suggestion: Profile) => {
-    if (profiles.some(p => p.text === suggestion.text) || (!isUnlimited && profiles.length >= maxProfiles)) {
-      return; // Already added or at limit
-    }
+    const isAlreadyAdded = profiles.some(p => p.text === suggestion.text);
     
-    setProfiles([...profiles, suggestion]);
+    if (isAlreadyAdded) {
+      // Remove from selected profiles
+      setProfiles(profiles.filter(p => p.text !== suggestion.text));
+    } else {
+      // Add to selected profiles (if not at limit)
+      if (!isUnlimited && profiles.length >= maxProfiles) {
+        return; // At limit, can't add more
+      }
+      setProfiles([...profiles, suggestion]);
+    }
   };
 
   const handleRemoveProfile = (index: number) => {
@@ -200,11 +207,11 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
                       key={index}
                       type="button"
                       onClick={() => handleAddSuggestion(suggestion)}
-                      disabled={isDisabled}
+                      disabled={!isAlreadyAdded && (!isUnlimited && profiles.length >= maxProfiles)}
                       className={`flex items-center justify-between p-2 rounded-xl border text-left transition-all duration-200 ${
                         isAlreadyAdded
-                          ? 'bg-green-50 border-green-200 text-green-700'
-                          : isDisabled
+                          ? 'bg-green-50 border-green-200 text-green-700 hover:bg-green-100'
+                          : (!isUnlimited && profiles.length >= maxProfiles)
                           ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed'
                           : 'bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100'
                       }`}
@@ -220,10 +227,12 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
                       </div>
                       <div className="flex items-center space-x-2">
                         {isAlreadyAdded ? (
-                          <div className="text-green-500" title="Adicionado">✓</div>
-                        ) : !isDisabled ? (
+                          <div className="text-green-500" title="Clique para remover">✓</div>
+                        ) : (!isUnlimited && profiles.length >= maxProfiles) ? (
+                          <div className="text-gray-400" title="Limite atingido">+</div>
+                        ) : (
                           <div className="text-purple-500" title="Clique para adicionar">+</div>
-                        ) : null}
+                        )}
                       </div>
                     </button>
                   );
