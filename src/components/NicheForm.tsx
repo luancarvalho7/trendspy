@@ -5,7 +5,8 @@ import { FormStepProps } from '../types/form';
 export default function NicheForm({ onContinue, formData }: FormStepProps) {
   // Check if we have niches from website analysis, otherwise use existing niches
   const getInitialNiches = () => {
-    // If we have niches from website analysis, use those
+
+    console.log(formData.niches)
     if (formData?.niches && formData.niches.length > 0) {
       return formData.niches;
     }
@@ -13,6 +14,7 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
   };
   
   const [niches, setNiches] = useState<string[]>(getInitialNiches());
+  
   const [currentNiche, setCurrentNiche] = useState('');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingValue, setEditingValue] = useState('');
