@@ -220,34 +220,3 @@ export default function ProfileMonitoringForm({ onContinue, formData }: FormStep
     </div>
   );
 }
-                <button
-                  type="button"
-                  onClick={() => handleAnswerSelection('Sim')}
-                  className={`w-full py-4 px-6 text-lg rounded-2xl border-2 transition-all duration-200 font-outfit text-left ${
-                    selectedAnswer === 'Sim'
-                      ? 'border-accent bg-accent/5 text-accent'
-                      : 'border-[#CFCFCF] text-gray-900 hover:border-accent'
-                  }`}
-                >
-                  Sim
-                </button>
-                
-                <button
-                  type="button"
-                  onClick={() => handleAnswerSelection('Não')}
-                  className={`w-full py-4 px-6 text-lg rounded-2xl border-2 transition-all duration-200 font-outfit text-left ${
-                    selectedAnswer === 'Não'
-                      ? 'border-accent bg-accent/5 text-accent'
-                      : 'border-[#CFCFCF] text-gray-900 hover:border-accent'
-                  }`}
-                >
-                  Não
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
