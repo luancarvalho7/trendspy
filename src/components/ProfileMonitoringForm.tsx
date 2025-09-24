@@ -41,11 +41,21 @@ export default function ProfileMonitoringForm({ onContinue, formData }: FormStep
         const responseData = await response.json();
         console.log('Webhook response:', responseData);
         
+        // Extract profiles from webhook response and format them as AI-recommended
+        let suggestedProfiles = [];
+        if (Array.isArray(responseData) && responseData.length > 0 && responseData[0].arr) {
+          suggestedProfiles = responseData[0].arr.map(profile => ({
+            text: profile.replace('@', ''), // Remove @ if present
+            type: 'aiRecommend'
+          }));
+        }
+
         // Continue with the response data
         if (onContinue) {
           onContinue({ 
             profileMonitoring: answer,
-            webhookResponse: responseData
+            webhookResponse: responseData,
+            profilesToMonitor: suggestedProfiles
           });
         }
       } else {

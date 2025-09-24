@@ -32,7 +32,10 @@ export interface FormData {
   eatingHabits?: string;
   mainObjective?: string;
   familyHistory?: string[];
-  profilesToMonitor?: string[];
+  profilesToMonitor?: Array<{
+    text: string;
+    type: 'aiRecommend' | 'manualAdded';
+  }> | string[]; // Allow both formats for backward compatibility
   lonelinessFactors?: string[];
   userProfileMetrics?: {
     profilePicture?: string;

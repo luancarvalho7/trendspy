@@ -2,13 +2,40 @@ import React, { useState, useEffect } from 'react';
 import Logo from './Logo';
 import { FormStepProps } from '../types/form';
 
+// Profile type definition
+interface Profile {
+  text: string;
+  type: 'aiRecommend' | 'manualAdded';
+}
+
 export default function TargetsForm({ onContinue, formData }: FormStepProps) {
-  const [profiles, setProfiles] = useState<string[]>(formData?.profilesToMonitor || []);
+  // Check if we have profiles from webhook analysis, otherwise use existing profiles
+  const getInitialProfiles = () => {
+    if (formData?.profilesToMonitor && formData.profilesToMonitor.length > 0) {
+      // Handle both old format (strings) and new format (objects)
+      return formData.profilesToMonitor.map(profile => {
+        if (typeof profile === 'string') {
+          return { text: profile, type: 'manualAdded' as const };
+        }
+        return profile;
+      });
+    }
+    return [];
+  };
+  
+  const [profiles, setProfiles] = useState<Profile[]>(getInitialProfiles());
   const [currentProfile, setCurrentProfile] = useState('');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingValue, setEditingValue] = useState('');
   const [maxProfiles, setMaxProfiles] = useState(3); // Default to plan 1a
 
+  // React to formData changes (e.g., when coming from webhook analysis)
+  useEffect(() => {
+    const newProfiles = getInitialProfiles();
+    if (newProfiles.length > 0 && JSON.stringify(newProfiles.map(p => p.text)) !== JSON.stringify(profiles.map(p => p.text))) {
+      setProfiles(newProfiles);
+    }
+  }, [formData]);
   // Get max profiles based on localStorage plan
   useEffect(() => {
     try {
@@ -35,8 +62,8 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
 
   const handleAddProfile = () => {
     const trimmedProfile = currentProfile.trim();
-    if (trimmedProfile && !profiles.includes(trimmedProfile) && profiles.length < maxProfiles) {
-      setProfiles([...profiles, trimmedProfile]);
+    if (trimmedProfile && !profiles.some(p => p.text === trimmedProfile) && profiles.length < maxProfiles) {
+      setProfiles([...profiles, { text: trimmedProfile, type: 'manualAdded' }]);
       setCurrentProfile('');
     }
   };
@@ -51,15 +78,19 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
   };
 
   const handleEditProfile = (index: number) => {
+    // Don't allow editing of AI-recommended profiles
+    if (profiles[index].type === 'aiRecommend') {
+      return;
+    }
     setEditingIndex(index);
-    setEditingValue(profiles[index]);
+    setEditingValue(profiles[index].text);
   };
 
   const handleSaveEdit = (index: number) => {
     const trimmedValue = editingValue.trim();
-    if (trimmedValue && !profiles.some((profile, i) => i !== index && profile === trimmedValue)) {
+    if (trimmedValue && !profiles.some((profile, i) => i !== index && profile.text === trimmedValue)) {
       const updatedProfiles = [...profiles];
-      updatedProfiles[index] = trimmedValue;
+      updatedProfiles[index] = { ...updatedProfiles[index], text: trimmedValue };
       setProfiles(updatedProfiles);
     }
     setEditingIndex(null);
@@ -158,8 +189,9 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
                 type="button"
                 onClick={handleAddProfile}
                 disabled={!currentProfile.trim() || profiles.includes(currentProfile.trim()) || (!isUnlimited && profiles.length >= maxProfiles)}
+                disabled={!currentProfile.trim() || profiles.some(p => p.text === currentProfile.trim()) || (!isUnlimited && profiles.length >= maxProfiles)}
                 className={`px-6 py-3 rounded-2xl font-medium transition-all duration-200 ${
-                  currentProfile.trim() && !profiles.includes(currentProfile.trim()) && (isUnlimited || profiles.length < maxProfiles)
+                  currentProfile.trim() && !profiles.some(p => p.text === currentProfile.trim()) && (isUnlimited || profiles.length < maxProfiles)
                     ? 'bg-accent text-white hover:bg-accent/90'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
@@ -176,14 +208,23 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
                 <div className="text-sm text-gray-600">
                   Perfis adicionados ({profiles.length}/{maxText}):
                 </div>
+                {formData?.profilesToMonitor && profiles.some(p => p.type === 'aiRecommend') && (
+                  <p className="text-sm text-purple-600 mb-2">
+                    ⭐ Perfis sugeridos baseados no seu nicho
+                  </p>
+                )}
                 <div className={`space-y-2 ${isUnlimited ? 'max-h-64 overflow-y-auto pr-2' : ''}`}>
                   {profiles.map((profile, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-3 bg-accent/5 border border-accent/20 rounded-xl"
+                      className={`flex items-center justify-between p-3 rounded-xl border ${
+                        profile.type === 'aiRecommend' 
+                          ? 'bg-purple-50 border-purple-200' 
+                          : 'bg-accent/5 border-accent/20'
+                      }`}
                     >
                       {editingIndex === index ? (
-                        // Edit mode
+                        // Edit mode (only for manual profiles)
                         <>
                           <div className="flex items-center space-x-2 flex-1 mr-2">
                             <span className="text-accent font-medium">@</span>
@@ -220,26 +261,44 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
                         // Display mode
                         <>
                           <div className="flex items-center space-x-2 flex-1">
-                            <span className="text-accent font-medium">@</span>
-                            <span className="text-accent font-medium">{profile}</span>
+                            <span className={`font-medium ${profile.type === 'aiRecommend' ? 'text-purple-600' : 'text-accent'}`}>@</span>
+                            <span className={`font-medium ${profile.type === 'aiRecommend' ? 'text-purple-600' : 'text-accent'}`}>{profile.text}</span>
                           </div>
                           <div className="flex items-center space-x-1">
-                            <button
-                              type="button"
-                              onClick={() => handleEditProfile(index)}
-                              className="text-blue-500 hover:text-blue-700 transition-colors p-1 text-sm"
-                              title="Edit"
-                            >
-                              ✏️
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveProfile(index)}
-                              className="text-red-500 hover:text-red-700 transition-colors p-1"
-                              title="Remove"
-                            >
-                              ×
-                            </button>
+                            {profile.type === 'aiRecommend' ? (
+                              <>
+                                <div className="text-purple-500 p-1" title="AI Suggested">
+                                  ⭐
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveProfile(index)}
+                                  className="text-red-500 hover:text-red-700 transition-colors p-1"
+                                  title="Remove"
+                                >
+                                  ×
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => handleEditProfile(index)}
+                                  className="text-blue-500 hover:text-blue-700 transition-colors p-1 text-sm"
+                                  title="Edit"
+                                >
+                                  ✏️
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveProfile(index)}
+                                  className="text-red-500 hover:text-red-700 transition-colors p-1"
+                                  title="Remove"
+                                >
+                                  ×
+                                </button>
+                              </>
+                            )}
                           </div>
                         </>
                       )}
