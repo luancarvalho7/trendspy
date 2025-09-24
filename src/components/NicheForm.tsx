@@ -24,7 +24,7 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
   };
   
   const [niches, setNiches] = useState<Niche[]>(getInitialNiches());
-
+  
   const [currentNiche, setCurrentNiche] = useState('');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingValue, setEditingValue] = useState('');
@@ -32,23 +32,20 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
   // React to formData changes (e.g., when coming from website analysis)
   useEffect(() => {
     const newNiches = getInitialNiches();
-    if (newNiches.length > 0 && JSON.stringify(newNiches.map(n => n.text)) !== JSON.stringify(niches.map(n => n.text))) {
+    if (newNiches.length > 0 && JSON.stringify(newNiches) !== JSON.stringify(niches)) {
       setNiches(newNiches);
     }
+  }, [formData?.niches]);
 
   const handleAddNiche = () => {
     const trimmedNiche = currentNiche.trim();
-    if (trimmedNiche && !niches.some(n => n.text === trimmedNiche) && niches.length < 6) {
+    if (trimmedNiche && !niches.some(niche => niche.text === trimmedNiche) && niches.length < 6) {
       setNiches([...niches, { text: trimmedNiche, type: 'manualAdded' }]);
       setCurrentNiche('');
     }
   };
 
   const handleRemoveNiche = (index: number) => {
-    // Don't allow removal of AI-recommended niches
-    if (niches[index].type === 'aiRecommend') {
-      return;
-    }
     setNiches(niches.filter((_, i) => i !== index));
     // Cancel editing if we're removing the niche being edited
     if (editingIndex === index) {
@@ -58,10 +55,6 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
   };
 
   const handleEditNiche = (index: number) => {
-    // Don't allow editing of AI-recommended niches
-    if (niches[index].type === 'aiRecommend') {
-      return;
-    }
     setEditingIndex(index);
     setEditingValue(niches[index].text);
   };
@@ -156,9 +149,9 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
               <button
                 type="button"
                 onClick={handleAddNiche}
-                disabled={!currentNiche.trim() || niches.some(n => n.text === currentNiche.trim()) || niches.length >= 6}
+                disabled={!currentNiche.trim() || niches.some(niche => niche.text === currentNiche.trim()) || niches.length >= 6}
                 className={`px-6 py-3 rounded-2xl font-medium transition-all duration-200 ${
-                  currentNiche.trim() && !niches.some(n => n.text === currentNiche.trim()) && niches.length < 6
+                  currentNiche.trim() && !niches.some(niche => niche.text === currentNiche.trim()) && niches.length < 6
                     ? 'bg-accent text-white hover:bg-accent/90'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
@@ -179,11 +172,7 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
                   {niches.map((niche, index) => (
                     <div
                       key={index}
-                      className={`flex items-center justify-between p-3 rounded-xl border ${
-                        niche.type === 'aiRecommend' 
-                          ? 'bg-purple-50 border-purple-200' 
-                          : 'bg-accent/5 border-accent/20'
-                      }`}
+                      className="flex items-center justify-between p-3 bg-accent/5 border border-accent/20 rounded-xl"
                     >
                       {editingIndex === index ? (
                         // Edit mode
@@ -193,11 +182,7 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
                             value={editingValue}
                             onChange={handleEditChange}
                             onKeyDown={(e) => handleEditKeyPress(e, index)}
-                            className={`flex-1 px-2 py-1 font-medium bg-white border rounded-lg focus:outline-none focus:ring-2 mr-2 ${
-                              niche.type === 'aiRecommend'
-                                ? 'text-purple-700 border-purple-300 focus:ring-purple-200'
-                                : 'text-accent border-accent focus:ring-accent/20'
-                            }`}
+                            className="flex-1 px-2 py-1 text-accent font-medium bg-white border border-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-accent/20 mr-2"
                             maxLength={50}
                             autoFocus
                           />
@@ -223,42 +208,24 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
                       ) : (
                         // Display mode
                         <>
-                          <div className="flex items-center space-x-2 flex-1">
-                            {niche.type === 'aiRecommend' && (
-                              <span className="text-purple-500 text-lg" title="AI Recommended">⭐</span>
-                            )}
-                            <span className={`font-medium ${
-                              niche.type === 'aiRecommend' ? 'text-purple-700' : 'text-accent'
-                            }`}>
-                              {niche.text}
-                            </span>
-                          </div>
+                          <span className="text-accent font-medium flex-1">{niche.text}</span>
                           <div className="flex items-center space-x-1">
-                            {niche.type === 'manualAdded' && (
-                              <>
-                                <button
-                                  type="button"
-                                  onClick={() => handleEditNiche(index)}
-                                  className="text-blue-500 hover:text-blue-700 transition-colors p-1 text-sm"
-                                  title="Edit"
-                                >
-                                  ✏️
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => handleRemoveNiche(index)}
-                                  className="text-red-500 hover:text-red-700 transition-colors p-1"
-                                  title="Remove"
-                                >
-                                  ×
-                                </button>
-                              </>
-                            )}
-                            {niche.type === 'aiRecommend' && (
-                              <span className="text-xs text-purple-600 font-medium px-2 py-1 bg-purple-100 rounded-full">
-                                AI
-                              </span>
-                            )}
+                            <button
+                              type="button"
+                              onClick={() => handleEditNiche(index)}
+                              className="text-blue-500 hover:text-blue-700 transition-colors p-1 text-sm"
+                              title="Edit"
+                            >
+                              ✏️
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveNiche(index)}
+                              className="text-red-500 hover:text-red-700 transition-colors p-1"
+                              title="Remove"
+                            >
+                              ×
+                            </button>
                           </div>
                         </>
                       )}
