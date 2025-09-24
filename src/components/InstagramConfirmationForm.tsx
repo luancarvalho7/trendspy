@@ -6,9 +6,9 @@ export default function InstagramConfirmationForm({ onContinue, formData }: Form
   const [isConfirming, setIsConfirming] = useState(false);
   
   // Get the profile data from the previous step
-  const profileData = formData?.userProfileMetrics?.[0];
+  const profileData = formData?.userProfileMetrics;
 
-  console.log(profiledata)
+  console.log(profileData)
   
   // If no profile data or success is not true, show error state
   if (!profileData || profileData.success !== true || formData?.profileError) {
