@@ -16,7 +16,7 @@ export default function InstagramConfirmationForm({ onContinue, formData }: Form
   };
   
   // If no profile data or success is not true, show error state
-  if (!profileData || profileData.success !== true || formData?.profileError) {
+  if (!profileData || profileData.success !== true) {
     return (
       <div className="min-h-screen bg-white flex flex-col font-outfit">
         <div className="pt-12 pb-16 px-6">
