@@ -100,7 +100,7 @@ export default function InstagramConfirmationForm({ onContinue, formData }: Form
                 <div className="text-accent font-medium">
                   <div className="flex items-center space-x-1">
                     <span>@{profileData.username}</span>
-                    {profileData.verified === true && (
+                    {profileData.verified == true && (
                       <svg 
                         className="w-4 h-4 text-blue-500 fill-current" 
                         viewBox="0 0 20 20"
