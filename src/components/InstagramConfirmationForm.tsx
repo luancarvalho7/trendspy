@@ -9,7 +9,7 @@ export default function InstagramConfirmationForm({ onContinue, formData }: Form
   const profileData = formData?.userProfileMetrics?.[0];
   
   // If no profile data or success is not true, show error state
-  if (!profileData || profileData.success !== 'true') {
+  if (!profileData || profileData.success !== true || formData?.profileError) {
     return (
       <div className="min-h-screen bg-white flex flex-col font-outfit">
         <div className="pt-12 pb-16 px-6">
@@ -28,7 +28,7 @@ export default function InstagramConfirmationForm({ onContinue, formData }: Form
               Não conseguimos encontrar este perfil do Instagram. Verifique o nome de usuário e tente novamente.
             </p>
             <button
-              onClick={() => window.history.back()}
+              onClick={handleChange}
               className="w-full py-4 px-6 rounded-full font-medium text-white bg-accent hover:bg-accent/90 transition-all duration-200"
             >
               Tentar novamente

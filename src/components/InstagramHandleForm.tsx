@@ -27,12 +27,24 @@ export default function InstagramHandleForm({ onContinue, formData }: FormStepPr
           const responseData = await response.json();
           console.log('User profile metrics:', responseData);
           
-          // Continue with the response data
-          if (onContinue) {
+          // Check if we got a successful response with valid data
+          if (responseData && responseData.length > 0 && responseData[0].success === true) {
+            // Continue with the response data
             onContinue({ 
               instagramHandle: instagramHandle.trim(),
               userProfileMetrics: responseData
             });
+          } else {
+            // Profile not found or invalid response
+            console.error('Invalid profile data or profile not found:', responseData);
+            // Show error message or continue anyway
+            if (onContinue) {
+              onContinue({ 
+                instagramHandle: instagramHandle.trim(),
+                userProfileMetrics: responseData,
+                profileError: true
+              });
+            }
           }
         } else {
           console.error('User profile request failed:', response.status, response.statusText);
