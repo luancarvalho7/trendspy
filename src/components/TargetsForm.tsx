@@ -186,11 +186,11 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
 
           {/* AI Suggestions */}
           {aiSuggestions.length > 0 && (
-            <div className="mb-6">
-              <div className="text-sm text-purple-600 mb-3 font-medium">
+            <div className="mb-4">
+              <div className="text-sm text-purple-600 mb-2 font-medium">
                 Sugestões baseadas no seu nicho:
               </div>
-              <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
+              <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto">
                 {aiSuggestions.map((suggestion, index) => {
                   const isAlreadyAdded = profiles.some(p => p.text === suggestion.text);
                   const isDisabled = isAlreadyAdded || (!isUnlimited && profiles.length >= maxProfiles);
@@ -201,7 +201,7 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
                       type="button"
                       onClick={() => handleAddSuggestion(suggestion)}
                       disabled={isDisabled}
-                      className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all duration-200 ${
+                      className={`flex items-center justify-between p-2 rounded-xl border text-left transition-all duration-200 ${
                         isAlreadyAdded
                           ? 'bg-green-50 border-green-200 text-green-700'
                           : isDisabled
@@ -209,12 +209,12 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
                           : 'bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100'
                       }`}
                     >
-                      <div className="flex items-center space-x-2 flex-1">
-                        <span className="font-medium">@</span>
+                      <div className="flex items-center space-x-1 flex-1">
+                        <span className="font-medium text-sm">@</span>
                         <div>
-                          <div className="font-medium">{suggestion.text}</div>
+                          <div className="font-medium text-sm">{suggestion.text}</div>
                           {suggestion.niche && (
-                            <div className="text-xs opacity-75">{suggestion.niche}</div>
+                            <div className="text-xs opacity-75 truncate">{suggestion.niche}</div>
                           )}
                         </div>
                       </div>
@@ -233,7 +233,7 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
           )}
 
           {/* Input Field */}
-          <div className="mb-6">
+          <div className="mb-4">
             <div className="flex space-x-2">
               <div className="flex-1 relative">
                 <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
@@ -244,7 +244,7 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
                   value={currentProfile}
                   onChange={handleProfileChange}
                   onKeyPress={handleKeyPress}
-                  className="w-full pl-10 pr-4 py-3 text-lg text-gray-900 bg-white border-2 border-[#CFCFCF] rounded-2xl transition-all duration-200 font-outfit focus:outline-none focus:border-accent hover:border-accent placeholder-gray-400"
+                  className="w-full pl-10 pr-4 py-3 text-base text-gray-900 bg-white border-2 border-[#CFCFCF] rounded-2xl transition-all duration-200 font-outfit focus:outline-none focus:border-accent hover:border-accent placeholder-gray-400"
                   placeholder="perfil_para_monitorar"
                   maxLength={30}
                   disabled={!isUnlimited && profiles.length >= maxProfiles}
@@ -255,7 +255,7 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
                 onClick={handleAddProfile}
                 disabled={!currentProfile.trim() || profiles.includes(currentProfile.trim()) || (!isUnlimited && profiles.length >= maxProfiles)}
                 disabled={!currentProfile.trim() || profiles.some(p => p.text === currentProfile.trim()) || (!isUnlimited && profiles.length >= maxProfiles)}
-                className={`px-6 py-3 rounded-2xl font-medium transition-all duration-200 ${
+                className={`px-5 py-3 rounded-2xl font-medium transition-all duration-200 ${
                   currentProfile.trim() && !profiles.some(p => p.text === currentProfile.trim()) && (isUnlimited || profiles.length < maxProfiles)
                     ? 'bg-accent text-white hover:bg-accent/90'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
@@ -267,29 +267,29 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
           </div>
 
           {/* Added Profiles */}
-          <div className="flex-1">
+          <div className="flex-1 min-h-0">
             {profiles.length > 0 && (
               <div className="space-y-3">
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-gray-600 mb-2">
                   Perfis adicionados ({profiles.length}/{maxText}):
                 </div>
-                <div className={`space-y-2 ${isUnlimited ? 'max-h-64 overflow-y-auto pr-2' : ''}`}>
+                <div className={`space-y-2 ${isUnlimited ? 'max-h-40 overflow-y-auto pr-2' : 'max-h-32 overflow-y-auto pr-2'}`}>
                   {profiles.map((profile, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-3 bg-accent/5 border-accent/20 rounded-xl border"
+                      className="flex items-center justify-between p-2 bg-accent/5 border-accent/20 rounded-xl border"
                     >
                       {editingIndex === index ? (
                         // Edit mode (only for manual profiles)
                         <>
-                          <div className="flex items-center space-x-2 flex-1 mr-2">
+                          <div className="flex items-center space-x-1 flex-1 mr-2">
                             <span className="text-accent font-medium">@</span>
                             <input
                               type="text"
                               value={editingValue}
                               onChange={handleEditChange}
                               onKeyDown={(e) => handleEditKeyPress(e, index)}
-                              className="flex-1 px-2 py-1 text-accent font-medium bg-white border border-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-accent/20"
+                              className="flex-1 px-2 py-1 text-sm text-accent font-medium bg-white border border-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-accent/20"
                               maxLength={30}
                               autoFocus
                             />
@@ -316,12 +316,12 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
                       ) : (
                         // Display mode
                         <>
-                          <div className="flex items-center space-x-2 flex-1">
-                            <span className="font-medium text-accent">@</span>
+                          <div className="flex items-center space-x-1 flex-1">
+                            <span className="font-medium text-accent text-sm">@</span>
                             <div>
-                              <div className="font-medium text-accent">{profile.text}</div>
+                              <div className="font-medium text-accent text-sm">{profile.text}</div>
                               {profile.niche && (
-                                <div className="text-xs text-accent opacity-75">{profile.niche}</div>
+                                <div className="text-xs text-accent opacity-75 truncate">{profile.niche}</div>
                               )}
                             </div>
                           </div>
@@ -362,11 +362,11 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
           </div>
 
           {/* Bottom Section with Continue Button */}
-          <div className="fixed bottom-[50px] left-0 right-0 px-6 max-w-sm mx-auto w-full">
+          <div className="pt-4 pb-8">
             <button
               type="submit"
               disabled={!isValidToSubmit}
-              className={`w-full py-4 px-6 rounded-full font-medium text-white text-lg transition-all duration-200 font-outfit ${
+              className={`w-full py-3 px-6 rounded-full font-medium text-white text-base transition-all duration-200 font-outfit ${
                 isValidToSubmit
                   ? 'bg-black hover:bg-gray-800 active:scale-95'
                   : 'bg-gray-300 cursor-not-allowed'
