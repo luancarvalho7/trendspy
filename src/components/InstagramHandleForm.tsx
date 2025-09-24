@@ -32,7 +32,10 @@ export default function InstagramHandleForm({ onContinue, formData }: FormStepPr
             // Continue with the response data
             onContinue({ 
               instagramHandle: instagramHandle.trim(),
-              userProfileMetrics: responseData
+              userProfileMetrics: {
+                ...responseData,
+                verified: true // Temporarily add verified status for testing
+              }
             });
           } else {
             // Profile not found or invalid response

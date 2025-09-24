@@ -34,6 +34,18 @@ export interface FormData {
   familyHistory?: string[];
   profilesToMonitor?: string[];
   lonelinessFactors?: string[];
+  userProfileMetrics?: {
+    profilePicture?: string;
+    bio?: string;
+    following?: string;
+    followers?: string;
+    media?: string;
+    name?: string;
+    username?: string;
+    userId?: string;
+    success?: boolean;
+    verified?: boolean;
+  };
   [key: string]: any; // Allow for additional fields as we add more questions
 }
 
