@@ -46,10 +46,6 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
   };
 
   const handleRemoveNiche = (index: number) => {
-    // Don't allow removal of AI-recommended niches
-    if (niches[index].type === 'aiRecommend') {
-      return;
-    }
     setNiches(niches.filter((_, i) => i !== index));
     // Cancel editing if we're removing the niche being edited
     if (editingIndex === index) {
@@ -219,9 +215,19 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
                           <span className="text-accent font-medium flex-1">{niche.text}</span>
                           <div className="flex items-center space-x-1">
                             {niche.type === 'aiRecommend' ? (
-                              <div className="text-purple-500 p-1" title="AI Suggested">
-                                ⭐
-                              </div>
+                              <>
+                                <div className="text-purple-500 p-1" title="AI Suggested">
+                                  ⭐
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveNiche(index)}
+                                  className="text-red-500 hover:text-red-700 transition-colors p-1"
+                                  title="Remove"
+                                >
+                                  ×
+                                </button>
+                              </>
                             ) : (
                               <>
                                 <button
