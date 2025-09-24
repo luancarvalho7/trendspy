@@ -14,6 +14,8 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
   
   const [niches, setNiches] = useState<string[]>(getInitialNiches());
   const [currentNiche, setCurrentNiche] = useState('');
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingValue, setEditingValue] = useState('');
 
   const handleAddNiche = () => {
     const trimmedNiche = currentNiche.trim();
@@ -25,6 +27,49 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
 
   const handleRemoveNiche = (index: number) => {
     setNiches(niches.filter((_, i) => i !== index));
+    // Cancel editing if we're removing the niche being edited
+    if (editingIndex === index) {
+      setEditingIndex(null);
+      setEditingValue('');
+    }
+  };
+
+  const handleEditNiche = (index: number) => {
+    setEditingIndex(index);
+    setEditingValue(niches[index]);
+  };
+
+  const handleSaveEdit = (index: number) => {
+    const trimmedValue = editingValue.trim();
+    if (trimmedValue && !niches.some((niche, i) => i !== index && niche === trimmedValue)) {
+      const updatedNiches = [...niches];
+      updatedNiches[index] = trimmedValue;
+      setNiches(updatedNiches);
+    }
+    setEditingIndex(null);
+    setEditingValue('');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingIndex(null);
+    setEditingValue('');
+  };
+
+  const handleEditKeyPress = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSaveEdit(index);
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      handleCancelEdit();
+    }
+  };
+
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length <= 50) {
+      setEditingValue(value);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -109,14 +154,61 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
                       key={index}
                       className="flex items-center justify-between p-3 bg-accent/5 border border-accent/20 rounded-xl"
                     >
-                      <span className="text-accent font-medium">{niche}</span>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveNiche(index)}
-                        className="text-red-500 hover:text-red-700 transition-colors p-1"
-                      >
-                        ×
-                      </button>
+                      {editingIndex === index ? (
+                        // Edit mode
+                        <>
+                          <input
+                            type="text"
+                            value={editingValue}
+                            onChange={handleEditChange}
+                            onKeyDown={(e) => handleEditKeyPress(e, index)}
+                            className="flex-1 px-2 py-1 text-accent font-medium bg-white border border-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-accent/20 mr-2"
+                            maxLength={50}
+                            autoFocus
+                          />
+                          <div className="flex items-center space-x-1">
+                            <button
+                              type="button"
+                              onClick={() => handleSaveEdit(index)}
+                              className="text-green-500 hover:text-green-700 transition-colors p-1 text-sm"
+                              title="Save"
+                            >
+                              ✓
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleCancelEdit}
+                              className="text-gray-500 hover:text-gray-700 transition-colors p-1 text-sm"
+                              title="Cancel"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        // Display mode
+                        <>
+                          <span className="text-accent font-medium flex-1">{niche}</span>
+                          <div className="flex items-center space-x-1">
+                            <button
+                              type="button"
+                              onClick={() => handleEditNiche(index)}
+                              className="text-blue-500 hover:text-blue-700 transition-colors p-1 text-sm"
+                              title="Edit"
+                            >
+                              ✏️
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveNiche(index)}
+                              className="text-red-500 hover:text-red-700 transition-colors p-1"
+                              title="Remove"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>
