@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Logo from './Logo';
 import { FormStepProps } from '../types/form';
 
@@ -17,6 +17,14 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
   const [currentNiche, setCurrentNiche] = useState('');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingValue, setEditingValue] = useState('');
+
+  // React to formData changes (e.g., when coming from website analysis)
+  useEffect(() => {
+    const newNiches = getInitialNiches();
+    if (newNiches.length > 0 && JSON.stringify(newNiches) !== JSON.stringify(niches)) {
+      setNiches(newNiches);
+    }
+  }, [formData?.niches]);
 
   const handleAddNiche = () => {
     const trimmedNiche = currentNiche.trim();
@@ -104,7 +112,7 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
             <h1 className="text-2xl font-medium text-gray-900 text-left font-outfit">
               Qual ou quais são os seus nicho(s)?
             </h1>
-            {niches.length > 0 && (
+            {formData?.niches && formData.niches.length > 0 && (
               <p className="text-sm text-green-600 mt-2">
                 ✓ Nichos sugeridos baseados no seu website
               </p>
