@@ -5,6 +5,7 @@ import { FormStepProps } from '../types/form';
 // Profile type definition
 interface Profile {
   text: string;
+  niche?: string;
   type: 'aiRecommend' | 'manualAdded';
 }
 
@@ -51,9 +52,10 @@ export default function ProfileMonitoringForm({ onContinue, formData }: FormStep
         
         // Extract profiles from webhook response: {"arr": ["@profile1", "@profile2"]}
         let suggestedProfiles = [];
-        if (responseData && responseData.arr && Array.isArray(responseData.arr)) {
-          suggestedProfiles = responseData.arr.map(profile => ({
-            text: profile.startsWith('@') ? profile.substring(1) : profile, // Remove @ if present
+        if (Array.isArray(responseData)) {
+          suggestedProfiles = responseData.map(profileObj => ({
+            text: profileObj.username, // username already without @
+            niche: profileObj.niche, // Store niche for display
             type: 'aiRecommend'
           }));
         }
@@ -173,24 +175,31 @@ export default function ProfileMonitoringForm({ onContinue, formData }: FormStep
                     {suggestedProfiles.map((profile, index) => (
                       <div
                         key={index}
-                        className="flex items-center justify-between p-3 bg-purple-50 border border-purple-200 rounded-xl"
+                        className="p-3 bg-purple-50 border border-purple-200 rounded-xl"
                       >
-                        <div className="flex items-center space-x-2 flex-1">
-                          <span className="text-purple-600 font-medium">@</span>
-                          <span className="text-purple-600 font-medium">{profile.text}</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <div className="text-purple-500 p-1" title="AI Suggested">
-                            ⭐
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2 flex-1">
+                            <span className="text-purple-600 font-medium">@</span>
+                            <div>
+                              <div className="text-purple-600 font-medium">{profile.text}</div>
+                              {profile.niche && (
+                                <div className="text-xs text-purple-500">{profile.niche}</div>
+                              )}
+                            </div>
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveProfile(index)}
-                            className="text-red-500 hover:text-red-700 transition-colors p-1"
-                            title="Remove"
-                          >
-                            ×
-                          </button>
+                          <div className="flex items-center space-x-1">
+                            <div className="text-purple-500 p-1" title="AI Suggested">
+                              ⭐
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveProfile(index)}
+                              className="text-red-500 hover:text-red-700 transition-colors p-1"
+                              title="Remove"
+                            >
+                              ×
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}
