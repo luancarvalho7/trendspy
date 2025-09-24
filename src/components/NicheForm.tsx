@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Logo from './Logo';
-import { FormStepProps } from '../types/form';
-
-// Niche type definition
-interface Niche {
-  text: string;
-  type: 'aiRecommend' | 'manualAdded';
-}
+import { FormStepProps, Niche } from '../types/form';
 
 export default function NicheForm({ onContinue, formData }: FormStepProps) {
   // Check if we have niches from website analysis, otherwise use existing niches

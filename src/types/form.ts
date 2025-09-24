@@ -1,7 +1,13 @@
+// Niche type definition
+export interface Niche {
+  text: string;
+  type: 'aiRecommend' | 'manualAdded';
+}
+
 export interface FormData {
   age?: string;
   sex?: string; // Keep for backward compatibility
-  niches?: string[];
+  niches?: Niche[];
   profileMonitoring?: string;
   heightUnit?: 'feet' | 'inches' | 'centimeters';
   heightFeet?: string;
