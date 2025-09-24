@@ -34,7 +34,6 @@ export default function InstagramHandleForm({ onContinue, formData }: FormStepPr
               instagramHandle: instagramHandle.trim(),
               userProfileMetrics: {
                 ...responseData,
-                verified: true // Temporarily add verified status for testing
               }
             });
           } else {
