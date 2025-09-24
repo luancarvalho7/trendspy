@@ -5,24 +5,35 @@ import { FormStepProps } from '../types/form';
 // Profile type definition
 interface Profile {
   text: string;
+  niche?: string;
   type: 'aiRecommend' | 'manualAdded';
 }
 
 export default function TargetsForm({ onContinue, formData }: FormStepProps) {
-  // Check if we have profiles from webhook analysis, otherwise use existing profiles
-  const getInitialProfiles = () => {
+  // Get AI suggested profiles if they exist
+  const getInitialProfiles = (): Profile[] => {
+    const profiles: Profile[] = [];
+    
+    // Add AI suggested profiles if they exist
+    if (formData?.aiSuggestedProfiles && formData.aiSuggestedProfiles.length > 0) {
+      profiles.push(...formData.aiSuggestedProfiles);
+    }
+    
+    // Add existing manually added profiles if they exist
     if (formData?.profilesToMonitor && formData.profilesToMonitor.length > 0) {
-      // Handle both old format (strings) and new format (objects)
-      return formData.profilesToMonitor.map(profile => {
+      const existingProfiles = formData.profilesToMonitor.map(profile => {
         if (typeof profile === 'string') {
           return { text: profile, type: 'manualAdded' as const };
         }
         return profile;
       });
+      profiles.push(...existingProfiles);
     }
-    return [];
+    
+    return profiles;
   };
   
+  // Check if we have profiles from webhook analysis, otherwise use existing profiles
   const [profiles, setProfiles] = useState<Profile[]>(getInitialProfiles());
   const [currentProfile, setCurrentProfile] = useState('');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -32,10 +43,14 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
   // React to formData changes (e.g., when coming from webhook analysis)
   useEffect(() => {
     const newProfiles = getInitialProfiles();
-    if (newProfiles.length > 0 && JSON.stringify(newProfiles.map(p => p.text)) !== JSON.stringify(profiles.map(p => p.text))) {
+    // Only update if we have new profiles and they're different from current ones
+    if (newProfiles.length > 0 && 
+        JSON.stringify(newProfiles.map(p => ({ text: p.text, type: p.type }))) !== 
+        JSON.stringify(profiles.map(p => ({ text: p.text, type: p.type })))) {
       setProfiles(newProfiles);
     }
-  }, [formData]);
+  }, [formData?.aiSuggestedProfiles, formData?.profilesToMonitor]);
+  
   // Get max profiles based on localStorage plan
   useEffect(() => {
     try {
@@ -162,9 +177,15 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
             <h1 className="text-2xl font-medium text-gray-900 text-left font-outfit">
               Adicione os perfis que você quer monitorar
             </h1>
-            <p className="text-sm text-gray-600 mt-2">
-              Digite um @ e pressione Enter para adicionar (máximo {maxText})
-            </p>
+            {formData?.aiSuggestedProfiles && formData.aiSuggestedProfiles.length > 0 ? (
+              <p className="text-sm text-purple-600 mt-2">
+                ⭐ Sugestões baseadas no seu nicho + adicione outros manualmente (máximo {maxText})
+              </p>
+            ) : (
+              <p className="text-sm text-gray-600 mt-2">
+                Digite um @ e pressione Enter para adicionar (máximo {maxText})
+              </p>
+            )}
           </div>
 
           {/* Input Field */}
@@ -208,7 +229,7 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
                 <div className="text-sm text-gray-600">
                   Perfis adicionados ({profiles.length}/{maxText}):
                 </div>
-                {formData?.profilesToMonitor && profiles.some(p => p.type === 'aiRecommend') && (
+                {profiles.some(p => p.type === 'aiRecommend') && (
                   <p className="text-sm text-purple-600 mb-2">
                     ⭐ Perfis sugeridos baseados no seu nicho
                   </p>
@@ -262,7 +283,12 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
                         <>
                           <div className="flex items-center space-x-2 flex-1">
                             <span className={`font-medium ${profile.type === 'aiRecommend' ? 'text-purple-600' : 'text-accent'}`}>@</span>
-                            <span className={`font-medium ${profile.type === 'aiRecommend' ? 'text-purple-600' : 'text-accent'}`}>{profile.text}</span>
+                            <div>
+                              <div className={`font-medium ${profile.type === 'aiRecommend' ? 'text-purple-600' : 'text-accent'}`}>{profile.text}</div>
+                              {profile.niche && profile.type === 'aiRecommend' && (
+                                <div className="text-xs text-purple-500">{profile.niche}</div>
+                              )}
+                            </div>
                           </div>
                           <div className="flex items-center space-x-1">
                             {profile.type === 'aiRecommend' ? (

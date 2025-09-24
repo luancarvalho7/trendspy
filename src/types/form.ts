@@ -40,8 +40,14 @@ export interface FormData {
   familyHistory?: string[];
   profilesToMonitor?: Array<{
     text: string;
+    niche?: string;
     type: 'aiRecommend' | 'manualAdded';
   }> | string[]; // Allow both formats for backward compatibility
+  aiSuggestedProfiles?: Array<{
+    text: string;
+    niche?: string;
+    type: 'aiRecommend' | 'manualAdded';
+  }>; // AI suggested profiles from webhook
   lonelinessFactors?: string[];
   userProfileMetrics?: {
     profilePicture?: string;
