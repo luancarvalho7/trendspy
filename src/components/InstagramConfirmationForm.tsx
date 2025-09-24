@@ -9,6 +9,11 @@ export default function InstagramConfirmationForm({ onContinue, formData }: Form
   const profileData = formData?.userProfileMetrics;
 
   console.log(profileData)
+
+  const handleChange = () => {
+    // Go back to the Instagram handle form
+    window.history.back();
+  };
   
   // If no profile data or success is not true, show error state
   if (!profileData || profileData.success !== true || formData?.profileError) {
@@ -48,11 +53,6 @@ export default function InstagramConfirmationForm({ onContinue, formData }: Form
         onContinue({ profileConfirmed: true });
       }
     }, 300);
-  };
-
-  const handleChange = () => {
-    // Go back to the Instagram handle form
-    window.history.back();
   };
 
   const formatNumber = (num: string) => {
