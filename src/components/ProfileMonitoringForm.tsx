@@ -82,6 +82,12 @@ export default function ProfileMonitoringForm({ onContinue, formData }: FormStep
     }
   };
 
+  const handleContinue = () => {
+    if (onContinue) {
+      onContinue({ profileMonitoring: selectedAnswer });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white flex flex-col font-outfit">
       {/* Header with Logo */}
@@ -140,9 +146,12 @@ export default function ProfileMonitoringForm({ onContinue, formData }: FormStep
           </div>
         </div>
       </div>
-    </div>
-  );
-}
+
+      {selectedAnswer && !isLoading && (
+        <div className="px-6 pb-8">
+          <div className="max-w-sm mx-auto w-full">
+            <div className="space-y-4">
+              <button
                 type="button"
                 onClick={handleContinue}
                 className="w-full py-4 px-6 rounded-full font-medium text-white text-lg transition-all duration-200 font-outfit bg-black hover:bg-gray-800 active:scale-95"
@@ -151,8 +160,8 @@ export default function ProfileMonitoringForm({ onContinue, formData }: FormStep
               </button>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
