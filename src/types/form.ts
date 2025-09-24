@@ -49,6 +49,7 @@ export interface FormData {
     type: 'aiRecommend' | 'manualAdded';
   }>; // AI suggested profiles from webhook
   lonelinessFactors?: string[];
+  brandMissions?: string[];
   userProfileMetrics?: {
     profilePicture?: string;
     bio?: string;

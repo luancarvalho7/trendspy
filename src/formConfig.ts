@@ -9,6 +9,8 @@ import ProfileMonitoringForm from './components/ProfileMonitoringForm';
 import TargetsForm from './components/TargetsForm';
 import WeightChangeForm from './components/WeightChangeForm';
 import MainObjectiveForm from './components/MedicalConditionsForm';
+import Phase1LoadingPage from './components/Phase1LoadingPage';
+import MissionSelectionForm from './components/MissionSelectionForm';
 
 export const formConfig: FormStep[] = [
   {
@@ -122,10 +124,30 @@ export const formConfig: FormStep[] = [
     component: TargetsForm,
     title: 'Targets to Monitor Question',
     nextStepLogic: (formData: FormData) => {
-      // End of form after targets
-      return null;
+      // After targets, go to phase 1 loading
+      return 'phase1_loading';
     },
     prevStepId: 'profile_monitoring'
+  },
+  {
+    id: 'phase1_loading',
+    component: Phase1LoadingPage,
+    title: 'Phase 1 Loading Screen',
+    nextStepLogic: (formData: FormData) => {
+      // After loading, go to phase 2 mission selection
+      return 'mission_selection';
+    },
+    prevStepId: 'targets'
+  },
+  {
+    id: 'mission_selection',
+    component: MissionSelectionForm,
+    title: 'Brand Mission Selection',
+    nextStepLogic: (formData: FormData) => {
+      // End of current form flow after mission selection
+      return null;
+    },
+    prevStepId: 'phase1_loading'
   }
 ];
 

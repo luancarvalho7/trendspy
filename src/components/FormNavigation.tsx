@@ -3,6 +3,7 @@ import { FormData } from '../types/form';
 import { formConfig, findStepById, getFirstStep } from '../formConfig';
 import LoadingPage from './LoadingPage';
 import ResultsPage from './ResultsPage';
+import Phase1LoadingPage from './Phase1LoadingPage';
 
 // localStorage key for form data
 const FORM_DATA_STORAGE_KEY = 'prevent-quiz-responses';
@@ -170,6 +171,19 @@ export default function FormNavigation() {
     console.log('Complete form data:', formData);
   };
 
+  // Handle completion of phase 1 loading animation
+  const handlePhase1LoadingComplete = () => {
+    // Continue to next step (mission_selection)
+    const currentStep = getCurrentStep();
+    if (currentStep) {
+      const nextStepId = currentStep.nextStepLogic(formData);
+      if (nextStepId) {
+        setHistory(prev => [...prev, currentStepId]);
+        setCurrentStepId(nextStepId);
+      }
+    }
+  };
+
   // Handle back navigation
   const handleBack = () => {
     if (isLoading) {
@@ -295,6 +309,16 @@ export default function FormNavigation() {
         <LoadingPage 
           formData={formData} 
           onComplete={handleLoadingComplete}
+        />
+      );
+    }
+    
+    // Handle Phase 1 Loading specially
+    if (currentStepId === 'phase1_loading') {
+      return (
+        <Phase1LoadingPage 
+          formData={formData} 
+          onComplete={handlePhase1LoadingComplete}
         />
       );
     }
