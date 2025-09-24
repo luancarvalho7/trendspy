@@ -52,7 +52,10 @@ export default function InstagramConfirmationForm({ onContinue, formData }: Form
     setIsConfirming(true);
     setTimeout(() => {
       if (onContinue) {
-        onContinue({ profileConfirmed: true });
+        onContinue({ 
+          profileConfirmed: true,
+          goBackToInstagramHandle: false // Clear any back navigation flag
+        });
       }
     }, 300);
   };
