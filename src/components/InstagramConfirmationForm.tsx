@@ -11,8 +11,10 @@ export default function InstagramConfirmationForm({ onContinue, formData }: Form
   console.log(profileData.verified)
 
   const handleChange = () => {
-    // Go back to the Instagram handle form
-    window.history.back();
+    // Signal to go back to Instagram handle selection
+    if (onContinue) {
+      onContinue({ goBackToInstagramHandle: true });
+    }
   };
   
   // If no profile data or success is not true, show error state

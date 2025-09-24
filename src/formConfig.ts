@@ -43,6 +43,10 @@ export const formConfig: FormStep[] = [
     component: InstagramConfirmationForm,
     title: 'Instagram Profile Confirmation',
     nextStepLogic: (formData: FormData) => {
+      // Check if user wants to go back to Instagram handle
+      if (formData.goBackToInstagramHandle) {
+        return 'instagram_handle';
+      }
       return 'has_website';
     },
     prevStepId: 'instagram_handle'
