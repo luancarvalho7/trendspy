@@ -98,7 +98,19 @@ export default function InstagramConfirmationForm({ onContinue, formData }: Form
                   {profileData.name}
                 </div>
                 <div className="text-accent font-medium">
-                  @{profileData.username}
+                  <div className="flex items-center space-x-1">
+                    <span>@{profileData.username}</span>
+                    {profileData.verified === true && (
+                      <svg 
+                        className="w-4 h-4 text-blue-500 fill-current" 
+                        viewBox="0 0 20 20"
+                        aria-label="Verified account"
+                      >
+                        <path d="M10 0L12.09 3.09L16 2L15.55 6.55L20 8L16.91 10.91L18 15L13.45 13.45L10 16L6.55 13.45L2 15L3.09 10.91L0 8L4.45 6.55L4 2L7.91 3.09L10 0Z" />
+                        <path d="M7.5 10L9 11.5L12.5 8" fill="white" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
