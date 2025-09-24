@@ -6,7 +6,7 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
   // Check if we have niches from website analysis, otherwise use existing niches
   const getInitialNiches = () => {
 
-    console.log('asdad')
+    console.log(formData)
     if (formData?.niches && formData.niches.length > 0) {
       return formData.niches;
     }
