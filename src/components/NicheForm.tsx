@@ -218,22 +218,30 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
                         <>
                           <span className="text-accent font-medium flex-1">{niche.text}</span>
                           <div className="flex items-center space-x-1">
-                            <button
-                              type="button"
-                              onClick={() => handleEditNiche(index)}
-                              className="text-blue-500 hover:text-blue-700 transition-colors p-1 text-sm"
-                              title="Edit"
-                            >
-                              ✏️
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveNiche(index)}
-                              className="text-red-500 hover:text-red-700 transition-colors p-1"
-                              title="Remove"
-                            >
-                              ×
-                            </button>
+                            {niche.type === 'aiRecommend' ? (
+                              <div className="text-purple-500 p-1" title="AI Suggested">
+                                ⭐
+                              </div>
+                            ) : (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => handleEditNiche(index)}
+                                  className="text-blue-500 hover:text-blue-700 transition-colors p-1 text-sm"
+                                  title="Edit"
+                                >
+                                  ✏️
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveNiche(index)}
+                                  className="text-red-500 hover:text-red-700 transition-colors p-1"
+                                  title="Remove"
+                                >
+                                  ×
+                                </button>
+                              </>
+                            )}
                           </div>
                         </>
                       )}
