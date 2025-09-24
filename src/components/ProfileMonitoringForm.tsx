@@ -13,6 +13,7 @@ export default function ProfileMonitoringForm({ onContinue, formData }: FormStep
   const [isLoading, setIsLoading] = useState(false);
   const [showProfilesList, setShowProfilesList] = useState(false);
   const [suggestedProfiles, setSuggestedProfiles] = useState<Profile[]>([]);
+  const [webhookError, setWebhookError] = useState(false);
 
   const handleAnswerSelection = (answer: string) => {
     setSelectedAnswer(answer);
@@ -32,6 +33,7 @@ export default function ProfileMonitoringForm({ onContinue, formData }: FormStep
 
   const handleNoSelection = async (answer: string) => {
     setIsLoading(true);
+    setWebhookError(false);
     
     try {
       const response = await fetch('https://webhook.workez.online/webhook/trendspy/lander/findTargets', {
@@ -71,6 +73,7 @@ export default function ProfileMonitoringForm({ onContinue, formData }: FormStep
       console.error('Webhook request error:', error);
       // Show empty list on error
       setSuggestedProfiles([]);
+      setWebhookError(true);
       setShowProfilesList(true);
     } finally {
       setIsLoading(false);
@@ -148,9 +151,20 @@ export default function ProfileMonitoringForm({ onContinue, formData }: FormStep
                 </div>
               ) : (
                 <div className="text-center py-8">
+                  {webhookError ? (
+                    <div>
+                      <div className="text-red-500 text-lg mb-2">
+                        ❌ Erro ao buscar perfis
+                      </div>
+                      <div className="text-gray-500 text-sm">
+                        Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.
+                      </div>
+                    </div>
+                  ) : (
                   <div className="text-gray-500 text-lg">
                     Nenhum perfil sugerido encontrado
                   </div>
+                  )}
                 </div>
               )}
             </div>
