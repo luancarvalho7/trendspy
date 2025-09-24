@@ -100,7 +100,6 @@ export default function InstagramConfirmationForm({ onContinue, formData }: Form
                 <div className="text-accent font-medium">
                   <div className="flex items-center space-x-1">
                     <span>@{profileData.username}</span>
-
                   </div>
                 </div>
               </div>
