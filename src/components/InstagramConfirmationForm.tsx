@@ -8,7 +8,7 @@ export default function InstagramConfirmationForm({ onContinue, formData }: Form
   // Get the profile data from the previous step
   const profileData = formData?.userProfileMetrics;
 
-  console.log(profileData.success)
+  console.log(profileData.verified)
 
   const handleChange = () => {
     // Go back to the Instagram handle form
