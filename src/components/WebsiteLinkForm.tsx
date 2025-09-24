@@ -60,7 +60,7 @@ export default function WebsiteLinkForm({ onContinue, formData }: FormStepProps)
           let extractedNiches = [];
           if (Array.isArray(responseData.niches) && responseData.niches.length > 0 && responseData.success === true) {
             // Convert AI niches to objects with type
-            const aiNiches = responseData[0].niches || [];
+            const aiNiches = responseData.niches || [];
             extractedNiches = aiNiches.map(niche => ({
               text: niche,
               type: 'aiRecommend'
