@@ -111,8 +111,8 @@ export const formConfig: FormStep[] = [
       if (formData.profileMonitoring === 'Sim') {
         return 'targets';
       } else {
-        // If they don't know which profiles to monitor, skip targets and go to hormone therapy
-        return 'hormone_therapy';
+        // If they don't know which profiles to monitor, go to targets with AI suggestions
+        return 'targets';
       }
     },
     prevStepId: 'main_objective'
