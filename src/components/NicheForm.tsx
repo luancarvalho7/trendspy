@@ -71,7 +71,7 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
     const trimmedValue = editingValue.trim();
     if (trimmedValue && !niches.some((niche, i) => i !== index && niche.text === trimmedValue)) {
       const updatedNiches = [...niches];
-      updatedNiches[index] = { text: trimmedValue, type: 'manualAdded' };
+      updatedNiches[index] = { ...updatedNiches[index], text: trimmedValue };
       setNiches(updatedNiches);
     }
     setEditingIndex(null);
