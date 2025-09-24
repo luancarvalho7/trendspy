@@ -4,6 +4,7 @@ import { FormStepProps } from '../types/form';
 
 export default function WebsiteLinkForm({ onContinue, formData }: FormStepProps) {
   const [websiteLink, setWebsiteLink] = useState(formData?.websiteLink || 'https://');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleWebsiteLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -34,10 +35,50 @@ export default function WebsiteLinkForm({ onContinue, formData }: FormStepProps)
     return urlPattern.test(trimmed);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (websiteLink.trim() && isValidWebsiteLink() && onContinue) {
-      onContinue({ websiteLink: websiteLink.trim() });
+    if (websiteLink.trim() && isValidWebsiteLink()) {
+      setIsLoading(true);
+      
+      try {
+        const response = await fetch('https://webhook.workez.online/webhook/trends/lander/analyzeWebsite', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...formData,
+            websiteLink: websiteLink.trim()
+          })
+        });
+
+        if (response.ok) {
+          const responseData = await response.json();
+          console.log('Website analysis response:', responseData);
+          
+          // Continue with the response data
+          if (onContinue) {
+            onContinue({ 
+              websiteLink: websiteLink.trim(),
+              websiteAnalysis: responseData
+            });
+          }
+        } else {
+          console.error('Website analysis request failed:', response.status, response.statusText);
+          // Continue anyway with just the website link
+          if (onContinue) {
+            onContinue({ websiteLink: websiteLink.trim() });
+          }
+        }
+      } catch (error) {
+        console.error('Website analysis request error:', error);
+        // Continue anyway with just the website link
+        if (onContinue) {
+          onContinue({ websiteLink: websiteLink.trim() });
+        }
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -60,30 +101,43 @@ export default function WebsiteLinkForm({ onContinue, formData }: FormStepProps)
 
           {/* Input Field */}
           <div className="flex-1">
-            <input
-              type="url"
-              value={websiteLink}
-              onChange={handleWebsiteLinkChange}
-              className="w-full px-4 py-4 text-lg text-gray-900 bg-white border-2 border-[#CFCFCF] rounded-2xl transition-all duration-200 font-outfit focus:outline-none focus:border-accent hover:border-accent placeholder-gray-400"
-              autoFocus
-              placeholder="https://www.seusite.com.br"
-            />
+            {isLoading ? (
+              <div className="w-full py-8 text-center">
+                <div className="inline-flex items-center space-x-3">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+                  <span className="text-lg text-gray-600 font-outfit">
+                    Analisando website...
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <input
+                type="url"
+                value={websiteLink}
+                onChange={handleWebsiteLinkChange}
+                className="w-full px-4 py-4 text-lg text-gray-900 bg-white border-2 border-[#CFCFCF] rounded-2xl transition-all duration-200 font-outfit focus:outline-none focus:border-accent hover:border-accent placeholder-gray-400"
+                autoFocus
+                placeholder="https://www.seusite.com.br"
+              />
+            )}
           </div>
 
           {/* Bottom Section with Button */}
-          <div className="fixed bottom-[50px] left-0 right-0 px-6 max-w-sm mx-auto w-full">
-            <button
-              type="submit"
-              disabled={!isValidWebsiteLink()}
-              className={`w-full py-4 px-6 rounded-full font-medium text-white text-lg transition-all duration-200 font-outfit ${
-                isValidWebsiteLink()
-                  ? 'bg-black hover:bg-gray-800 active:scale-95'
-                  : 'bg-gray-300 cursor-not-allowed'
-              }`}
-            >
-              Continue
-            </button>
-          </div>
+          {!isLoading && (
+            <div className="fixed bottom-[50px] left-0 right-0 px-6 max-w-sm mx-auto w-full">
+              <button
+                type="submit"
+                disabled={!isValidWebsiteLink()}
+                className={`w-full py-4 px-6 rounded-full font-medium text-white text-lg transition-all duration-200 font-outfit ${
+                  isValidWebsiteLink()
+                    ? 'bg-black hover:bg-gray-800 active:scale-95'
+                    : 'bg-gray-300 cursor-not-allowed'
+                }`}
+              >
+                Continue
+              </button>
+            </div>
+          )}
         </form>
       </div>
     </div>
