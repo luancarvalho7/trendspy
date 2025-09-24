@@ -24,7 +24,7 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
   };
   
   const [niches, setNiches] = useState<Niche[]>(getInitialNiches());
-  
+
   const [currentNiche, setCurrentNiche] = useState('');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingValue, setEditingValue] = useState('');
@@ -32,20 +32,24 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
   // React to formData changes (e.g., when coming from website analysis)
   useEffect(() => {
     const newNiches = getInitialNiches();
-    if (newNiches.length > 0 && JSON.stringify(newNiches) !== JSON.stringify(niches)) {
+    if (newNiches.length > 0 && JSON.stringify(newNiches.map(n => n.text)) !== JSON.stringify(niches.map(n => n.text))) {
       setNiches(newNiches);
     }
-  }, [formData?.niches]);
+  }, [formData]);
 
   const handleAddNiche = () => {
     const trimmedNiche = currentNiche.trim();
-    if (trimmedNiche && !niches.some(niche => niche.text === trimmedNiche) && niches.length < 6) {
+    if (trimmedNiche && !niches.some(n => n.text === trimmedNiche) && niches.length < 6) {
       setNiches([...niches, { text: trimmedNiche, type: 'manualAdded' }]);
       setCurrentNiche('');
     }
   };
 
   const handleRemoveNiche = (index: number) => {
+    // Don't allow removal of AI-recommended niches
+    if (niches[index].type === 'aiRecommend') {
+      return;
+    }
     setNiches(niches.filter((_, i) => i !== index));
     // Cancel editing if we're removing the niche being edited
     if (editingIndex === index) {
@@ -55,6 +59,10 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
   };
 
   const handleEditNiche = (index: number) => {
+    // Don't allow editing of AI-recommended niches
+    if (niches[index].type === 'aiRecommend') {
+      return;
+    }
     setEditingIndex(index);
     setEditingValue(niches[index].text);
   };
@@ -63,7 +71,7 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
     const trimmedValue = editingValue.trim();
     if (trimmedValue && !niches.some((niche, i) => i !== index && niche.text === trimmedValue)) {
       const updatedNiches = [...niches];
-      updatedNiches[index] = { ...updatedNiches[index], text: trimmedValue };
+      updatedNiches[index] = { text: trimmedValue, type: 'manualAdded' };
       setNiches(updatedNiches);
     }
     setEditingIndex(null);
@@ -149,9 +157,9 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
               <button
                 type="button"
                 onClick={handleAddNiche}
-                disabled={!currentNiche.trim() || niches.some(niche => niche.text === currentNiche.trim()) || niches.length >= 6}
+                disabled={!currentNiche.trim() || niches.some(n => n.text === currentNiche.trim()) || niches.length >= 6}
                 className={`px-6 py-3 rounded-2xl font-medium transition-all duration-200 ${
-                  currentNiche.trim() && !niches.some(niche => niche.text === currentNiche.trim()) && niches.length < 6
+                  currentNiche.trim() && !niches.some(n => n.text === currentNiche.trim()) && niches.length < 6
                     ? 'bg-accent text-white hover:bg-accent/90'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
