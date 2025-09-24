@@ -2,6 +2,7 @@ import { FormStep, FormData } from './types/form';
 import AccountNameForm from './components/AccountNameForm';
 import SocialNetworkTypeForm from './components/SocialNetworkTypeForm';
 import InstagramHandleForm from './components/InstagramHandleForm';
+import InstagramConfirmationForm from './components/InstagramConfirmationForm';
 import WebsiteLinkForm from './components/WebsiteLinkForm';
 import NicheForm from './components/NicheForm';
 import ProfileMonitoringForm from './components/ProfileMonitoringForm';
@@ -33,9 +34,18 @@ export const formConfig: FormStep[] = [
     component: InstagramHandleForm,
     title: 'Instagram Handle Question',
     nextStepLogic: (formData: FormData) => {
-      return 'has_website';
+      return 'instagram_confirmation';
     },
     prevStepId: 'social_network_type'
+  },
+  {
+    id: 'instagram_confirmation',
+    component: InstagramConfirmationForm,
+    title: 'Instagram Profile Confirmation',
+    nextStepLogic: (formData: FormData) => {
+      return 'has_website';
+    },
+    prevStepId: 'instagram_handle'
   },
   {
     id: 'has_website',
@@ -50,7 +60,7 @@ export const formConfig: FormStep[] = [
         return 'niches';
       }
     },
-    prevStepId: 'instagram_handle'
+    prevStepId: 'instagram_confirmation'
   },
   {
     id: 'website_link',
