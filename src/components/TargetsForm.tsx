@@ -10,31 +10,22 @@ interface Profile {
 }
 
 export default function TargetsForm({ onContinue, formData }: FormStepProps) {
-  // Get AI suggested profiles if they exist
+  // Get only manually added profiles for initial state
   const getInitialProfiles = (): Profile[] => {
-    const profiles: Profile[] = [];
-    
-    // Add AI suggested profiles if they exist
-    if (formData?.aiSuggestedProfiles && formData.aiSuggestedProfiles.length > 0) {
-      profiles.push(...formData.aiSuggestedProfiles);
-    }
-    
-    // Add existing manually added profiles if they exist
     if (formData?.profilesToMonitor && formData.profilesToMonitor.length > 0) {
-      const existingProfiles = formData.profilesToMonitor.map(profile => {
+      return formData.profilesToMonitor.map(profile => {
         if (typeof profile === 'string') {
           return { text: profile, type: 'manualAdded' as const };
         }
         return profile;
       });
-      profiles.push(...existingProfiles);
     }
-    
-    return profiles;
+    return [];
   };
   
-  // Check if we have profiles from webhook analysis, otherwise use existing profiles
+  // Separate AI suggestions and manually added profiles
   const [profiles, setProfiles] = useState<Profile[]>(getInitialProfiles());
+  const [aiSuggestions] = useState<Profile[]>(formData?.aiSuggestedProfiles || []);
   const [currentProfile, setCurrentProfile] = useState('');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingValue, setEditingValue] = useState('');
@@ -43,13 +34,10 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
   // React to formData changes (e.g., when coming from webhook analysis)
   useEffect(() => {
     const newProfiles = getInitialProfiles();
-    // Only update if we have new profiles and they're different from current ones
-    if (newProfiles.length > 0 && 
-        JSON.stringify(newProfiles.map(p => ({ text: p.text, type: p.type }))) !== 
-        JSON.stringify(profiles.map(p => ({ text: p.text, type: p.type })))) {
+    if (newProfiles.length > 0) {
       setProfiles(newProfiles);
     }
-  }, [formData?.aiSuggestedProfiles, formData?.profilesToMonitor]);
+  }, [formData?.profilesToMonitor]);
   
   // Get max profiles based on localStorage plan
   useEffect(() => {
@@ -81,6 +69,14 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
       setProfiles([...profiles, { text: trimmedProfile, type: 'manualAdded' }]);
       setCurrentProfile('');
     }
+  };
+
+  const handleAddSuggestion = (suggestion: Profile) => {
+    if (profiles.some(p => p.text === suggestion.text) || (!isUnlimited && profiles.length >= maxProfiles)) {
+      return; // Already added or at limit
+    }
+    
+    setProfiles([...profiles, suggestion]);
   };
 
   const handleRemoveProfile = (index: number) => {
@@ -177,9 +173,9 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
             <h1 className="text-2xl font-medium text-gray-900 text-left font-outfit">
               Adicione os perfis que você quer monitorar
             </h1>
-            {formData?.aiSuggestedProfiles && formData.aiSuggestedProfiles.length > 0 ? (
+            {aiSuggestions.length > 0 ? (
               <p className="text-sm text-purple-600 mt-2">
-                ⭐ Sugestões baseadas no seu nicho + adicione outros manualmente (máximo {maxText})
+                ⭐ Clique nas sugestões para adicionar + digite outros manualmente (máximo {maxText})
               </p>
             ) : (
               <p className="text-sm text-gray-600 mt-2">
@@ -187,6 +183,54 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
               </p>
             )}
           </div>
+
+          {/* AI Suggestions */}
+          {aiSuggestions.length > 0 && (
+            <div className="mb-6">
+              <div className="text-sm text-purple-600 mb-3 font-medium">
+                Sugestões baseadas no seu nicho:
+              </div>
+              <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
+                {aiSuggestions.map((suggestion, index) => {
+                  const isAlreadyAdded = profiles.some(p => p.text === suggestion.text);
+                  const isDisabled = isAlreadyAdded || (!isUnlimited && profiles.length >= maxProfiles);
+                  
+                  return (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => handleAddSuggestion(suggestion)}
+                      disabled={isDisabled}
+                      className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all duration-200 ${
+                        isAlreadyAdded
+                          ? 'bg-green-50 border-green-200 text-green-700'
+                          : isDisabled
+                          ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed'
+                          : 'bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-2 flex-1">
+                        <span className="font-medium">@</span>
+                        <div>
+                          <div className="font-medium">{suggestion.text}</div>
+                          {suggestion.niche && (
+                            <div className="text-xs opacity-75">{suggestion.niche}</div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {isAlreadyAdded ? (
+                          <div className="text-green-500" title="Adicionado">✓</div>
+                        ) : !isDisabled ? (
+                          <div className="text-purple-500" title="Clique para adicionar">+</div>
+                        ) : null}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Input Field */}
           <div className="mb-6">
@@ -229,20 +273,11 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
                 <div className="text-sm text-gray-600">
                   Perfis adicionados ({profiles.length}/{maxText}):
                 </div>
-                {profiles.some(p => p.type === 'aiRecommend') && (
-                  <p className="text-sm text-purple-600 mb-2">
-                    ⭐ Perfis sugeridos baseados no seu nicho
-                  </p>
-                )}
                 <div className={`space-y-2 ${isUnlimited ? 'max-h-64 overflow-y-auto pr-2' : ''}`}>
                   {profiles.map((profile, index) => (
                     <div
                       key={index}
-                      className={`flex items-center justify-between p-3 rounded-xl border ${
-                        profile.type === 'aiRecommend' 
-                          ? 'bg-purple-50 border-purple-200' 
-                          : 'bg-accent/5 border-accent/20'
-                      }`}
+                      className="flex items-center justify-between p-3 bg-accent/5 border-accent/20 rounded-xl border"
                     >
                       {editingIndex === index ? (
                         // Edit mode (only for manual profiles)
@@ -282,30 +317,21 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
                         // Display mode
                         <>
                           <div className="flex items-center space-x-2 flex-1">
-                            <span className={`font-medium ${profile.type === 'aiRecommend' ? 'text-purple-600' : 'text-accent'}`}>@</span>
+                            <span className="font-medium text-accent">@</span>
                             <div>
-                              <div className={`font-medium ${profile.type === 'aiRecommend' ? 'text-purple-600' : 'text-accent'}`}>{profile.text}</div>
-                              {profile.niche && profile.type === 'aiRecommend' && (
-                                <div className="text-xs text-purple-500">{profile.niche}</div>
+                              <div className="font-medium text-accent">{profile.text}</div>
+                              {profile.niche && (
+                                <div className="text-xs text-accent opacity-75">{profile.niche}</div>
                               )}
                             </div>
                           </div>
                           <div className="flex items-center space-x-1">
-                            {profile.type === 'aiRecommend' ? (
-                              <>
-                                <div className="text-purple-500 p-1" title="AI Suggested">
-                                  ⭐
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={() => handleRemoveProfile(index)}
-                                  className="text-red-500 hover:text-red-700 transition-colors p-1"
-                                  title="Remove"
-                                >
-                                  ×
-                                </button>
-                              </>
-                            ) : (
+                            {profile.type === 'aiRecommend' && (
+                              <div className="text-purple-500 p-1" title="AI Suggested">
+                                ⭐
+                              </div>
+                            )}
+                            {profile.type === 'manualAdded' && (
                               <>
                                 <button
                                   type="button"
@@ -315,16 +341,16 @@ export default function TargetsForm({ onContinue, formData }: FormStepProps) {
                                 >
                                   ✏️
                                 </button>
-                                <button
-                                  type="button"
-                                  onClick={() => handleRemoveProfile(index)}
-                                  className="text-red-500 hover:text-red-700 transition-colors p-1"
-                                  title="Remove"
-                                >
-                                  ×
-                                </button>
                               </>
                             )}
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveProfile(index)}
+                              className="text-red-500 hover:text-red-700 transition-colors p-1"
+                              title="Remove"
+                            >
+                              ×
+                            </button>
                           </div>
                         </>
                       )}
