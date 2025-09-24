@@ -29,8 +29,6 @@ export default function InstagramHandleForm({ onContinue, formData }: FormStepPr
           
           // Check if we got a successful response with valid data
           if (responseData && responseData.success === true) {
-
-            console.log(responseData)
             // Continue with the response data
             onContinue({ 
               instagramHandle: instagramHandle.trim(),
