@@ -60,6 +60,7 @@ export default function WebsiteLinkForm({ onContinue, formData }: FormStepProps)
           let extractedNiches = [];
           if (Array.isArray(responseData) && responseData.length > 0 && responseData[0].success === true) {
             extractedNiches = responseData[0].niches || [];
+            console.log(extractedNiches)
           }
           
           // Continue with the response data
