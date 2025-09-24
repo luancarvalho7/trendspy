@@ -56,11 +56,18 @@ export default function WebsiteLinkForm({ onContinue, formData }: FormStepProps)
           const responseData = await response.json();
           console.log('Website analysis response:', responseData);
           
+          // Handle the response which is an array with niches data
+          let extractedNiches = [];
+          if (Array.isArray(responseData) && responseData.length > 0 && responseData[0].success === true) {
+            extractedNiches = responseData[0].niches || [];
+          }
+          
           // Continue with the response data
           if (onContinue) {
             onContinue({ 
               websiteLink: websiteLink.trim(),
-              websiteAnalysis: responseData
+              websiteAnalysis: responseData,
+              niches: extractedNiches.length > 0 ? extractedNiches : undefined
             });
           }
         } else {

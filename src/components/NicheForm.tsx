@@ -3,7 +3,16 @@ import Logo from './Logo';
 import { FormStepProps } from '../types/form';
 
 export default function NicheForm({ onContinue, formData }: FormStepProps) {
-  const [niches, setNiches] = useState<string[]>(formData?.niches || []);
+  // Check if we have niches from website analysis, otherwise use existing niches
+  const getInitialNiches = () => {
+    // If we have niches from website analysis, use those
+    if (formData?.niches && formData.niches.length > 0) {
+      return formData.niches;
+    }
+    return [];
+  };
+  
+  const [niches, setNiches] = useState<string[]>(getInitialNiches());
   const [currentNiche, setCurrentNiche] = useState('');
 
   const handleAddNiche = () => {
@@ -49,6 +58,11 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
             <h1 className="text-2xl font-medium text-gray-900 text-left font-outfit">
               Qual ou quais são os seus nicho(s)?
             </h1>
+            {niches.length > 0 && (
+              <p className="text-sm text-green-600 mt-2">
+                ✓ Nichos sugeridos baseados no seu website
+              </p>
+            )}
             <p className="text-sm text-gray-600 mt-2">
               Digite um nicho e pressione Enter para adicionar (máximo 6)
             </p>
