@@ -13,6 +13,7 @@ import Phase1LoadingPage from './components/Phase1LoadingPage';
 import MissionSelectionForm from './components/MissionSelectionForm';
 import CoreValuesForm from './components/CoreValuesForm';
 import CompetitiveDifferentialsForm from './components/CompetitiveDifferentialsForm';
+import MarketSegmentForm from './components/MarketSegmentForm';
 
 export const formConfig: FormStep[] = [
   {
@@ -166,10 +167,20 @@ export const formConfig: FormStep[] = [
     component: CompetitiveDifferentialsForm,
     title: 'Competitive Differentials Selection',
     nextStepLogic: (formData: FormData) => {
-      // End of current form flow after competitive differentials selection
-      return null;
+      // After competitive differentials, go to market segment
+      return 'market_segment';
     },
     prevStepId: 'core_values'
+  },
+  {
+    id: 'market_segment',
+    component: MarketSegmentForm,
+    title: 'Market Segment Selection',
+    nextStepLogic: (formData: FormData) => {
+      // End of current form flow after market segment selection
+      return null;
+    },
+    prevStepId: 'competitive_differentials'
   }
 ];
 

@@ -52,6 +52,8 @@ export interface FormData {
   brandMissions?: string[];
   coreValues?: string[];
   competitiveDifferentials?: string[];
+  marketSegment?: string;
+  customMarketSegment?: string;
   userProfileMetrics?: {
     profilePicture?: string;
     bio?: string;
