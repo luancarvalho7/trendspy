@@ -40,17 +40,6 @@ export default function PersonalityAttributesForm({ onContinue, formData }: Form
     }, 500);
   };
 
-  const handlePreviousPair = () => {
-    if (currentPairIndex > 0) {
-      setCurrentPairIndex(currentPairIndex - 1);
-    }
-  };
-
-  const handleNextPair = () => {
-    if (currentPairIndex < attributePairs.length - 1) {
-      setCurrentPairIndex(currentPairIndex + 1);
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -145,34 +134,6 @@ export default function PersonalityAttributesForm({ onContinue, formData }: Form
               </div>
             </div>
 
-            {/* Navigation Buttons */}
-            <div className="flex items-center justify-between mt-6 space-x-4">
-              <button
-                type="button"
-                onClick={handlePreviousPair}
-                disabled={currentPairIndex === 0}
-                className={`px-6 py-3 rounded-2xl font-medium transition-all duration-200 ${
-                  currentPairIndex === 0
-                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                ← Anterior
-              </button>
-              
-              <button
-                type="button"
-                onClick={handleNextPair}
-                disabled={currentPairIndex === attributePairs.length - 1}
-                className={`px-6 py-3 rounded-2xl font-medium transition-all duration-200 ${
-                  currentPairIndex === attributePairs.length - 1
-                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    : 'bg-accent text-white hover:bg-accent/90'
-                }`}
-              >
-                Próximo →
-              </button>
-            </div>
           </div>
 
           {/* Selected Attributes Summary */}
