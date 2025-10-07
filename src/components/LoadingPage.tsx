@@ -20,32 +20,27 @@ export default function LoadingPage({ formData, onComplete }: LoadingPageProps) 
   const [pulseIntensity, setPulseIntensity] = useState(0);
   const [scanLine, setScanLine] = useState(0);
   const [metrics, setMetrics] = useState<MetricRow[]>([
-    { label: 'Cardio capacity (walking, stairs)', status: 'pending', color: 'grey', show: true },
-    { label: 'Metabolic load (weight, weight change)', status: 'pending', color: 'grey', show: true },
-    { label: 'Sleep stability (hours, schedule, snoring)', status: 'pending', color: 'grey', show: true },
-    { label: 'Stress & isolation (stress, loneliness)', status: 'pending', color: 'grey', show: true },
-    { 
-      label: 'Hormonal factors', 
-      status: 'pending', 
-      color: 'grey', 
-      show: formData.hormoneTherapy === 'Yes' || formData.pregnancyStatus !== 'No' 
-    }
+    { label: 'Análise do nicho selecionado', status: 'pending', color: 'grey', show: true },
+    { label: 'Definição do tom de voz da marca', status: 'pending', color: 'grey', show: true },
+    { label: 'Personalidade e valores da marca', status: 'pending', color: 'grey', show: true },
+    { label: 'Estratégia de comunicação', status: 'pending', color: 'grey', show: true },
+    { label: 'Posicionamento competitivo', status: 'pending', color: 'grey', show: true }
   ]);
 
   const microCopyTexts = [
-    "Identificando padrões de engagement dos competidores…",
-    "Analisando frequência de postagens e horários…",
-    "Mapeando estratégias de hashtags utilizadas…",
-    "Processando dados de audiência e segmentação…",
-    "Correlacionando métricas de performance do nicho…",
-    "Computando matriz de oportunidades de conteúdo…",
-    "Calibrando algoritmos de detecção de tendências…",
-    "Sintetizando perfil estratégico personalizado…"
+    "Analisando características do seu nicho…",
+    "Definindo personalidade da marca…",
+    "Mapeando tom de voz ideal…",
+    "Processando valores e missão da marca…",
+    "Calibrando estilo de comunicação…",
+    "Estruturando identidade verbal…",
+    "Sintetizando diretrizes de marca…",
+    "Finalizando perfil de comunicação…"
   ];
 
   useEffect(() => {
-    // Extended duration between 4.2-5.8 seconds for more tension
-    const totalDuration = 4200 + Math.random() * 1600;
+    // Fixed duration of exactly 3 seconds
+    const totalDuration = 3000;
     const startTime = Date.now();
 
     const animate = () => {
