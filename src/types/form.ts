@@ -58,6 +58,7 @@ export interface FormData {
   targetAudience?: string[];
   publicPerception?: string;
   emotionalBenefit?: string;
+  reasonsToBelieves?: string[];
   userProfileMetrics?: {
     profilePicture?: string;
     bio?: string;

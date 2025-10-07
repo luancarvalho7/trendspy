@@ -18,6 +18,7 @@ import CompetitiveContextForm from './components/CompetitiveContextForm';
 import TargetAudienceForm from './components/TargetAudienceForm';
 import PublicPerceptionForm from './components/PublicPerceptionForm';
 import EmotionalBenefitsForm from './components/EmotionalBenefitsForm';
+import ReasonsToBelieveForm from './components/ReasonsToBelieveForm';
 
 export const formConfig: FormStep[] = [
   {
@@ -221,10 +222,20 @@ export const formConfig: FormStep[] = [
     component: EmotionalBenefitsForm,
     title: 'Emotional Benefits Question',
     nextStepLogic: (formData: FormData) => {
-      // End of current form flow after emotional benefits
-      return null;
+      // After emotional benefits, go to reasons to believe
+      return 'reasons_to_believe';
     },
     prevStepId: 'public_perception'
+  },
+  {
+    id: 'reasons_to_believe',
+    component: ReasonsToBelieveForm,
+    title: 'Reasons to Believe Question',
+    nextStepLogic: (formData: FormData) => {
+      // End of current form flow after reasons to believe
+      return null;
+    },
+    prevStepId: 'emotional_benefits'
   }
 ];
 
