@@ -6,12 +6,12 @@ export default function CompetitiveContextForm({ onContinue, formData }: FormSte
   const [selectedContext, setSelectedContext] = useState(formData?.competitiveContext || '');
 
   const contexts = [
-    '"Pioneira" – Mercado Emergente',
-    '"Desafiante" – Ingressando contra Gigantes',
-    '"Disruptiva" – Quebrando o Status Quo',
-    '"Líder estabelecida" – Referência de Mercado',
-    '"Especialista de Nicho" – Foco segmentado',
-    '"Concorrência Fragmentada" – Muitos Jogadores Pequenos'
+    'Pioneira',
+    'Desafiante',
+    'Disruptiva',
+    'Líder estabelecida',
+    'Especialista de Nicho',
+    'Concorrência Fragmentada'
   ];
 
   const handleContextSelection = (context: string) => {
