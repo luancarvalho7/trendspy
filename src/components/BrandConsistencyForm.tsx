@@ -33,7 +33,13 @@ export default function BrandConsistencyForm({ onContinue, formData }: FormStepP
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedElements.length > 0 && onContinue) {
+      // Save final data
       onContinue({ brandConsistencyElements: selectedElements });
+      
+      // Redirect to external URL after a brief delay
+      setTimeout(() => {
+        window.location.href = 'https://workeztrends.netlify.app/';
+      }, 500);
     }
   };
 
