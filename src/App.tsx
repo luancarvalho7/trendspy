@@ -1,9 +1,17 @@
 import React from 'react';
-import FormNavigation from './components/FormNavigation';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import OnboardFunnel from './components/OnboardFunnel';
+import VoiceToneFunnel from './components/VoiceToneFunnel';
 
 function App() {
   return (
-    <FormNavigation />
+    <Router>
+      <Routes>
+        <Route path="/onboard" element={<OnboardFunnel />} />
+        <Route path="/voice-tone" element={<VoiceToneFunnel />} />
+        <Route path="/" element={<Navigate to="/onboard" replace />} />
+      </Routes>
+    </Router>
   );
 }
 

@@ -32,6 +32,8 @@ export default function Phase1LoadingPage({ formData, onComplete }: Phase1Loadin
 
     // Complete after all steps
     const completeTimeout = setTimeout(() => {
+      // In onboard funnel, this should trigger redirect to login
+      // The onComplete handler in OnboardFunnel will handle the redirect
       onComplete();
     }, totalDuration);
     intervals.push(completeTimeout);
