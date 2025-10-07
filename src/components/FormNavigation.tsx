@@ -419,21 +419,6 @@ export default function FormNavigation() {
                   </button>
                 ))}
                 
-                <div className="mt-3 mb-2 text-gray-300 font-bold border-t border-gray-600 pt-2">
-                  Dynamic HT Steps:
-                </div>
-                {['ht2', 'ht3', 'ht4'].map((stepId, index) => (
-                  <button
-                    key={stepId}
-                    onClick={() => jumpToDynamicStep(index)}
-                    className={`block w-full text-left px-2 py-1 text-xs hover:bg-gray-700 rounded mb-1 ${
-                      isDynamicSubFlowActive && dynamicSubStepIndex === index ? 'bg-purple-600' : ''
-                    }`}
-                  >
-                    {stepId} (dynamic)
-                  </button>
-                ))}
-                
                 <div className="mt-3 border-t border-gray-600 pt-2">
                   <button
                     onClick={() => {
