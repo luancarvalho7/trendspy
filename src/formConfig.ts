@@ -19,6 +19,7 @@ import TargetAudienceForm from './components/TargetAudienceForm';
 import PublicPerceptionForm from './components/PublicPerceptionForm';
 import EmotionalBenefitsForm from './components/EmotionalBenefitsForm';
 import ReasonsToBelieveForm from './components/ReasonsToBelieveForm';
+import PersonalityAttributesForm from './components/PersonalityAttributesForm';
 
 export const formConfig: FormStep[] = [
   {
@@ -232,10 +233,20 @@ export const formConfig: FormStep[] = [
     component: ReasonsToBelieveForm,
     title: 'Reasons to Believe Question',
     nextStepLogic: (formData: FormData) => {
-      // End of current form flow after reasons to believe
-      return null;
+      // After reasons to believe, go to personality attributes
+      return 'personality_attributes';
     },
     prevStepId: 'emotional_benefits'
+  },
+  {
+    id: 'personality_attributes',
+    component: PersonalityAttributesForm,
+    title: 'Personality Attributes Question',
+    nextStepLogic: (formData: FormData) => {
+      // End of current form flow after personality attributes
+      return null;
+    },
+    prevStepId: 'reasons_to_believe'
   }
 ];
 
