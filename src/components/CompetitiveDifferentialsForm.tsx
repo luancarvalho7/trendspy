@@ -48,20 +48,6 @@ export default function CompetitiveDifferentialsForm({ onContinue, formData }: F
         <Logo />
       </div>
 
-      {/* Phase Header */}
-      <div className="px-6 mb-6">
-        <div className="max-w-sm mx-auto">
-          <div className="bg-accent/10 rounded-2xl p-4 border border-accent/20">
-            <h2 className="text-lg font-semibold text-accent text-center">
-              Fase 2: Tom de Voz da Sua Marca
-            </h2>
-            <p className="text-sm text-accent/80 text-center mt-1">
-              Etapa 1: Definir Identidade da Marca
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* Main Content */}
       <div className="flex-1 flex flex-col px-6 max-w-sm mx-auto w-full">
         <form onSubmit={handleSubmit} className="flex flex-col h-full">
