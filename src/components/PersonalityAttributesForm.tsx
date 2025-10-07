@@ -16,9 +16,6 @@ export default function PersonalityAttributesForm({ onContinue, formData }: Form
     { positive: 'Empático / Acolhedor', negative: 'Objetivo / Frio' }
   ];
 
-  // Flatten all attributes for easier processing
-  const allAttributes = attributePairs.flatMap(pair => [pair.positive, pair.negative]);
-
   const handleAttributeToggle = (attribute: string) => {
     if (selectedAttributes.includes(attribute)) {
       // Remove if already selected
@@ -50,7 +47,7 @@ export default function PersonalityAttributesForm({ onContinue, formData }: Form
       {/* Phase Header */}
       <div className="px-6 mb-6">
         <div className="max-w-sm mx-auto">
-          <div className="bg-purple-10 rounded-2xl p-4 border border-purple-200">
+          <div className="bg-purple-50 rounded-2xl p-4 border border-purple-200">
             <h2 className="text-lg font-semibold text-purple-700 text-center">
               Fase 2: Tom de Voz da Sua Marca
             </h2>
@@ -70,51 +67,59 @@ export default function PersonalityAttributesForm({ onContinue, formData }: Form
               Quais atributos de personalidade definem o tom de voz da marca?
             </h1>
             <p className="text-sm text-gray-600 mt-2">
-              Selecione de 3 a 5 adjetivos que melhor descrevem o estilo de comunicação desejado ({selectedAttributes.length}/5)
+              Selecione de 3 a 5 adjetivos que melhor descrevem o estilo de comunicação desejado
             </p>
-            <p className="text-xs text-amber-600 mt-1">
-              💡 Evite escolher atributos opostos (ex: Descontraído + Sério)
-            </p>
+            <div className="flex items-center justify-between mt-3">
+              <p className="text-xs text-amber-600">
+                💡 Evite escolher atributos opostos
+              </p>
+              <p className="text-xs text-gray-500">
+                {selectedAttributes.length}/5 selecionados
+              </p>
+            </div>
           </div>
 
           {/* Attribute Pairs */}
           <div className="flex-1">
-            <div className="space-y-4 max-h-80 overflow-y-auto pr-2">
+            <div className="space-y-6 max-h-96 overflow-y-auto pr-2">
               {attributePairs.map((pair, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex flex-wrap gap-2">
-                    {/* Positive attribute */}
+                <div key={index} className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
+                  {/* Pair number and separator */}
+                  <div className="flex items-center justify-center mb-3">
+                    <div className="h-px bg-gray-300 flex-1"></div>
+                    <span className="px-3 text-xs text-gray-500 bg-gray-50">ou</span>
+                    <div className="h-px bg-gray-300 flex-1"></div>
+                  </div>
+                  
+                  {/* Attribute buttons */}
+                  <div className="space-y-3">
+                    {/* First attribute */}
                     <button
                       type="button"
                       onClick={() => handleAttributeToggle(pair.positive)}
                       disabled={!selectedAttributes.includes(pair.positive) && selectedAttributes.length >= 5}
-                      className={`px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 flex-1 min-w-[140px] ${
+                      className={`w-full py-3 px-4 text-sm rounded-xl font-medium transition-all duration-200 text-left ${
                         selectedAttributes.includes(pair.positive)
-                          ? 'bg-blue-500 text-white'
+                          ? 'bg-accent text-white shadow-md border-2 border-accent'
                           : (!selectedAttributes.includes(pair.positive) && selectedAttributes.length >= 5)
-                          ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                          : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                          ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-2 border-transparent'
+                          : 'bg-white text-gray-700 hover:bg-accent hover:text-white border-2 border-gray-200 hover:border-accent'
                       }`}
                     >
                       {pair.positive}
                     </button>
                     
-                    {/* VS separator */}
-                    <div className="flex items-center px-2">
-                      <span className="text-xs text-gray-400">vs</span>
-                    </div>
-                    
-                    {/* Negative attribute */}
+                    {/* Second attribute */}
                     <button
                       type="button"
                       onClick={() => handleAttributeToggle(pair.negative)}
                       disabled={!selectedAttributes.includes(pair.negative) && selectedAttributes.length >= 5}
-                      className={`px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 flex-1 min-w-[140px] ${
+                      className={`w-full py-3 px-4 text-sm rounded-xl font-medium transition-all duration-200 text-left ${
                         selectedAttributes.includes(pair.negative)
-                          ? 'bg-green-500 text-white'
+                          ? 'bg-accent text-white shadow-md border-2 border-accent'
                           : (!selectedAttributes.includes(pair.negative) && selectedAttributes.length >= 5)
-                          ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                          : 'bg-green-100 text-green-700 hover:bg-green-200'
+                          ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-2 border-transparent'
+                          : 'bg-white text-gray-700 hover:bg-accent hover:text-white border-2 border-gray-200 hover:border-accent'
                       }`}
                     >
                       {pair.negative}
@@ -125,25 +130,8 @@ export default function PersonalityAttributesForm({ onContinue, formData }: Form
             </div>
           </div>
 
-          {/* Selected Attributes Preview */}
-          {selectedAttributes.length > 0 && (
-            <div className="pt-4 pb-2 border-t border-gray-100">
-              <div className="text-xs text-gray-600 mb-2">Selecionados:</div>
-              <div className="flex flex-wrap gap-2">
-                {selectedAttributes.map((attr, index) => (
-                  <span
-                    key={index}
-                    className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs"
-                  >
-                    {attr}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Bottom Section with Continue Button */}
-          <div className="pt-6 pb-8">
+          <div className="pt-6 pb-8 border-t border-gray-100 mt-4">
             <button
               type="submit"
               disabled={!isValidToSubmit}
@@ -158,6 +146,11 @@ export default function PersonalityAttributesForm({ onContinue, formData }: Form
             {selectedAttributes.length < 3 && (
               <p className="text-xs text-gray-500 text-center mt-2">
                 Selecione pelo menos 3 atributos para continuar
+              </p>
+            )}
+            {selectedAttributes.length >= 3 && (
+              <p className="text-xs text-green-600 text-center mt-2">
+                ✓ {selectedAttributes.length} atributos selecionados
               </p>
             )}
           </div>
