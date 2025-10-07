@@ -11,6 +11,7 @@ import WeightChangeForm from './components/WeightChangeForm';
 import MainObjectiveForm from './components/MedicalConditionsForm';
 import Phase1LoadingPage from './components/Phase1LoadingPage';
 import MissionSelectionForm from './components/MissionSelectionForm';
+import CoreValuesForm from './components/CoreValuesForm';
 
 export const formConfig: FormStep[] = [
   {
@@ -144,10 +145,20 @@ export const formConfig: FormStep[] = [
     component: MissionSelectionForm,
     title: 'Brand Mission Selection',
     nextStepLogic: (formData: FormData) => {
-      // End of current form flow after mission selection
-      return null;
+      // After mission selection, go to core values
+      return 'core_values';
     },
     prevStepId: 'phase1_loading'
+  },
+  {
+    id: 'core_values',
+    component: CoreValuesForm,
+    title: 'Core Values Selection',
+    nextStepLogic: (formData: FormData) => {
+      // End of current form flow after core values selection
+      return null;
+    },
+    prevStepId: 'mission_selection'
   }
 ];
 
