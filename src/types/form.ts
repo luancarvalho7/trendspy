@@ -56,6 +56,7 @@ export interface FormData {
   customMarketSegment?: string;
   competitiveContext?: string;
   targetAudience?: string[];
+  publicPerception?: string;
   userProfileMetrics?: {
     profilePicture?: string;
     bio?: string;

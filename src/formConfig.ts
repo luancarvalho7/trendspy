@@ -16,6 +16,7 @@ import CompetitiveDifferentialsForm from './components/CompetitiveDifferentialsF
 import MarketSegmentForm from './components/MarketSegmentForm';
 import CompetitiveContextForm from './components/CompetitiveContextForm';
 import TargetAudienceForm from './components/TargetAudienceForm';
+import PublicPerceptionForm from './components/PublicPerceptionForm';
 
 export const formConfig: FormStep[] = [
   {
@@ -199,10 +200,20 @@ export const formConfig: FormStep[] = [
     component: TargetAudienceForm,
     title: 'Target Audience Selection',
     nextStepLogic: (formData: FormData) => {
-      // End of current form flow after target audience selection
-      return null;
+      // After target audience, go to public perception
+      return 'public_perception';
     },
     prevStepId: 'competitive_context'
+  },
+  {
+    id: 'public_perception',
+    component: PublicPerceptionForm,
+    title: 'Public Perception Question',
+    nextStepLogic: (formData: FormData) => {
+      // End of current form flow after public perception
+      return null;
+    },
+    prevStepId: 'target_audience'
   }
 ];
 
