@@ -54,6 +54,8 @@ export interface FormData {
   competitiveDifferentials?: string[];
   marketSegment?: string;
   customMarketSegment?: string;
+  competitiveContext?: string;
+  targetAudience?: string[];
   userProfileMetrics?: {
     profilePicture?: string;
     bio?: string;

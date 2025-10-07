@@ -14,6 +14,8 @@ import MissionSelectionForm from './components/MissionSelectionForm';
 import CoreValuesForm from './components/CoreValuesForm';
 import CompetitiveDifferentialsForm from './components/CompetitiveDifferentialsForm';
 import MarketSegmentForm from './components/MarketSegmentForm';
+import CompetitiveContextForm from './components/CompetitiveContextForm';
+import TargetAudienceForm from './components/TargetAudienceForm';
 
 export const formConfig: FormStep[] = [
   {
@@ -177,10 +179,30 @@ export const formConfig: FormStep[] = [
     component: MarketSegmentForm,
     title: 'Market Segment Selection',
     nextStepLogic: (formData: FormData) => {
-      // End of current form flow after market segment selection
-      return null;
+      // After market segment, go to competitive context
+      return 'competitive_context';
     },
     prevStepId: 'competitive_differentials'
+  },
+  {
+    id: 'competitive_context',
+    component: CompetitiveContextForm,
+    title: 'Competitive Context Selection',
+    nextStepLogic: (formData: FormData) => {
+      // After competitive context, go to target audience
+      return 'target_audience';
+    },
+    prevStepId: 'market_segment'
+  },
+  {
+    id: 'target_audience',
+    component: TargetAudienceForm,
+    title: 'Target Audience Selection',
+    nextStepLogic: (formData: FormData) => {
+      // End of current form flow after target audience selection
+      return null;
+    },
+    prevStepId: 'competitive_context'
   }
 ];
 
