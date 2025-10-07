@@ -57,6 +57,7 @@ export interface FormData {
   competitiveContext?: string;
   targetAudience?: string[];
   publicPerception?: string;
+  emotionalBenefit?: string;
   userProfileMetrics?: {
     profilePicture?: string;
     bio?: string;

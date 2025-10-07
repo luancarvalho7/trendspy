@@ -17,6 +17,7 @@ import MarketSegmentForm from './components/MarketSegmentForm';
 import CompetitiveContextForm from './components/CompetitiveContextForm';
 import TargetAudienceForm from './components/TargetAudienceForm';
 import PublicPerceptionForm from './components/PublicPerceptionForm';
+import EmotionalBenefitsForm from './components/EmotionalBenefitsForm';
 
 export const formConfig: FormStep[] = [
   {
@@ -210,10 +211,20 @@ export const formConfig: FormStep[] = [
     component: PublicPerceptionForm,
     title: 'Public Perception Question',
     nextStepLogic: (formData: FormData) => {
-      // End of current form flow after public perception
-      return null;
+      // After public perception, go to emotional benefits
+      return 'emotional_benefits';
     },
     prevStepId: 'target_audience'
+  },
+  {
+    id: 'emotional_benefits',
+    component: EmotionalBenefitsForm,
+    title: 'Emotional Benefits Question',
+    nextStepLogic: (formData: FormData) => {
+      // End of current form flow after emotional benefits
+      return null;
+    },
+    prevStepId: 'public_perception'
   }
 ];
 
