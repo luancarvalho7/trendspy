@@ -4,6 +4,7 @@ import { FormStepProps } from '../types/form';
 
 export default function PersonalityAttributesForm({ onContinue, formData }: FormStepProps) {
   const [selectedAttributes, setSelectedAttributes] = useState<string[]>(formData?.personalityAttributes || []);
+  const [currentPairIndex, setCurrentPairIndex] = useState(0);
 
   const attributePairs = [
     { positive: 'Amigável / Conversacional', negative: 'Formal / Polido' },
@@ -16,15 +17,38 @@ export default function PersonalityAttributesForm({ onContinue, formData }: Form
     { positive: 'Empático / Acolhedor', negative: 'Objetivo / Frio' }
   ];
 
-  const handleAttributeToggle = (attribute: string) => {
-    if (selectedAttributes.includes(attribute)) {
-      // Remove if already selected
-      setSelectedAttributes(selectedAttributes.filter(a => a !== attribute));
-    } else {
-      // Add if not selected and under limit
-      if (selectedAttributes.length < 5) {
-        setSelectedAttributes([...selectedAttributes, attribute]);
+  const currentPair = attributePairs[currentPairIndex];
+
+  const handleAttributeSelection = (attribute: string) => {
+    const otherAttribute = attribute === currentPair.positive ? currentPair.negative : currentPair.positive;
+    
+    // Remove both attributes from current pair first
+    let newAttributes = selectedAttributes.filter(attr => 
+      attr !== currentPair.positive && attr !== currentPair.negative
+    );
+    
+    // Add the selected attribute
+    newAttributes.push(attribute);
+    
+    setSelectedAttributes(newAttributes);
+    
+    // Auto advance to next pair after selection
+    setTimeout(() => {
+      if (currentPairIndex < attributePairs.length - 1) {
+        setCurrentPairIndex(currentPairIndex + 1);
       }
+    }, 500);
+  };
+
+  const handlePreviousPair = () => {
+    if (currentPairIndex > 0) {
+      setCurrentPairIndex(currentPairIndex - 1);
+    }
+  };
+
+  const handleNextPair = () => {
+    if (currentPairIndex < attributePairs.length - 1) {
+      setCurrentPairIndex(currentPairIndex + 1);
     }
   };
 
@@ -35,27 +59,16 @@ export default function PersonalityAttributesForm({ onContinue, formData }: Form
     }
   };
 
-  const isValidToSubmit = selectedAttributes.length >= 3 && selectedAttributes.length <= 5;
+  const isValidToSubmit = selectedAttributes.length >= 3;
+  const currentPairSelection = selectedAttributes.find(attr => 
+    attr === currentPair.positive || attr === currentPair.negative
+  );
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-outfit">
       {/* Header with Logo */}
       <div className="pt-12 pb-8 px-6">
         <Logo />
-      </div>
-
-      {/* Phase Header */}
-      <div className="px-6 mb-6">
-        <div className="max-w-sm mx-auto">
-          <div className="bg-purple-50 rounded-2xl p-4 border border-purple-200">
-            <h2 className="text-lg font-semibold text-purple-700 text-center">
-              Fase 2: Tom de Voz da Sua Marca
-            </h2>
-            <p className="text-sm text-purple-600 text-center mt-1">
-              Etapa 2: Definir Atributos de Personalidade
-            </p>
-          </div>
-        </div>
       </div>
 
       {/* Main Content */}
@@ -71,64 +84,110 @@ export default function PersonalityAttributesForm({ onContinue, formData }: Form
             </p>
             <div className="flex items-center justify-between mt-3">
               <p className="text-xs text-amber-600">
-                💡 Evite escolher atributos opostos
+                💡 Escolha um de cada comparação
               </p>
               <p className="text-xs text-gray-500">
-                {selectedAttributes.length}/5 selecionados
+                {selectedAttributes.length}/8 selecionados
               </p>
             </div>
           </div>
 
-          {/* Attribute Pairs */}
-          <div className="flex-1">
-            <div className="space-y-6 max-h-96 overflow-y-auto pr-2">
-              {attributePairs.map((pair, index) => (
-                <div key={index} className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
-                  {/* Pair number and separator */}
-                  <div className="flex items-center justify-center mb-3">
-                    <div className="h-px bg-gray-300 flex-1"></div>
-                    <span className="px-3 text-xs text-gray-500 bg-gray-50">ou</span>
-                    <div className="h-px bg-gray-300 flex-1"></div>
-                  </div>
-                  
-                  {/* Attribute buttons */}
-                  <div className="space-y-3">
-                    {/* First attribute */}
-                    <button
-                      type="button"
-                      onClick={() => handleAttributeToggle(pair.positive)}
-                      disabled={!selectedAttributes.includes(pair.positive) && selectedAttributes.length >= 5}
-                      className={`w-full py-3 px-4 text-sm rounded-xl font-medium transition-all duration-200 text-left ${
-                        selectedAttributes.includes(pair.positive)
-                          ? 'bg-accent text-white shadow-md border-2 border-accent'
-                          : (!selectedAttributes.includes(pair.positive) && selectedAttributes.length >= 5)
-                          ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-2 border-transparent'
-                          : 'bg-white text-gray-700 hover:bg-accent hover:text-white border-2 border-gray-200 hover:border-accent'
-                      }`}
-                    >
-                      {pair.positive}
-                    </button>
-                    
-                    {/* Second attribute */}
-                    <button
-                      type="button"
-                      onClick={() => handleAttributeToggle(pair.negative)}
-                      disabled={!selectedAttributes.includes(pair.negative) && selectedAttributes.length >= 5}
-                      className={`w-full py-3 px-4 text-sm rounded-xl font-medium transition-all duration-200 text-left ${
-                        selectedAttributes.includes(pair.negative)
-                          ? 'bg-accent text-white shadow-md border-2 border-accent'
-                          : (!selectedAttributes.includes(pair.negative) && selectedAttributes.length >= 5)
-                          ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-2 border-transparent'
-                          : 'bg-white text-gray-700 hover:bg-accent hover:text-white border-2 border-gray-200 hover:border-accent'
-                      }`}
-                    >
-                      {pair.negative}
-                    </button>
-                  </div>
-                </div>
-              ))}
+          {/* Progress Indicator */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between text-sm text-gray-500 mb-2">
+              <span>Comparação {currentPairIndex + 1} de {attributePairs.length}</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className="bg-accent h-2 rounded-full transition-all duration-300"
+                style={{ width: `${((currentPairIndex + 1) / attributePairs.length) * 100}%` }}
+              />
             </div>
           </div>
+
+          {/* Current Pair Comparison */}
+          <div className="flex-1">
+            <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+              {/* Pair separator */}
+              <div className="flex items-center justify-center mb-6">
+                <div className="h-px bg-gray-300 flex-1"></div>
+                <span className="px-4 text-sm text-gray-500 bg-gray-50 font-medium">ou</span>
+                <div className="h-px bg-gray-300 flex-1"></div>
+              </div>
+              
+              {/* Attribute buttons */}
+              <div className="space-y-4">
+                {/* First attribute */}
+                <button
+                  type="button"
+                  onClick={() => handleAttributeSelection(currentPair.positive)}
+                  className={`w-full py-4 px-6 text-base rounded-2xl font-medium transition-all duration-200 text-left ${
+                    currentPairSelection === currentPair.positive
+                      ? 'bg-accent text-white shadow-lg border-2 border-accent'
+                      : 'bg-white text-gray-700 hover:bg-accent hover:text-white border-2 border-gray-200 hover:border-accent'
+                  }`}
+                >
+                  {currentPair.positive}
+                </button>
+                
+                {/* Second attribute */}
+                <button
+                  type="button"
+                  onClick={() => handleAttributeSelection(currentPair.negative)}
+                  className={`w-full py-4 px-6 text-base rounded-2xl font-medium transition-all duration-200 text-left ${
+                    currentPairSelection === currentPair.negative
+                      ? 'bg-accent text-white shadow-lg border-2 border-accent'
+                      : 'bg-white text-gray-700 hover:bg-accent hover:text-white border-2 border-gray-200 hover:border-accent'
+                  }`}
+                >
+                  {currentPair.negative}
+                </button>
+              </div>
+            </div>
+
+            {/* Navigation Buttons */}
+            <div className="flex items-center justify-between mt-6 space-x-4">
+              <button
+                type="button"
+                onClick={handlePreviousPair}
+                disabled={currentPairIndex === 0}
+                className={`px-6 py-3 rounded-2xl font-medium transition-all duration-200 ${
+                  currentPairIndex === 0
+                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                ← Anterior
+              </button>
+              
+              <button
+                type="button"
+                onClick={handleNextPair}
+                disabled={currentPairIndex === attributePairs.length - 1}
+                className={`px-6 py-3 rounded-2xl font-medium transition-all duration-200 ${
+                  currentPairIndex === attributePairs.length - 1
+                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    : 'bg-accent text-white hover:bg-accent/90'
+                }`}
+              >
+                Próximo →
+              </button>
+            </div>
+          </div>
+
+          {/* Selected Attributes Summary */}
+          {selectedAttributes.length > 0 && (
+            <div className="mt-6 p-4 bg-green-50 rounded-2xl border border-green-200">
+              <h3 className="text-sm font-semibold text-green-800 mb-2">Atributos Selecionados:</h3>
+              <div className="flex flex-wrap gap-2">
+                {selectedAttributes.map((attr, index) => (
+                  <span key={index} className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                    {attr}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Bottom Section with Continue Button */}
           <div className="pt-6 pb-8 border-t border-gray-100 mt-4">
@@ -145,7 +204,7 @@ export default function PersonalityAttributesForm({ onContinue, formData }: Form
             </button>
             {selectedAttributes.length < 3 && (
               <p className="text-xs text-gray-500 text-center mt-2">
-                Selecione pelo menos 3 atributos para continuar
+                Complete pelo menos 3 comparações para continuar
               </p>
             )}
             {selectedAttributes.length >= 3 && (
