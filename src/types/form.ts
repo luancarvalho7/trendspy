@@ -60,6 +60,7 @@ export interface FormData {
   emotionalBenefit?: string;
   reasonsToBelieves?: string[];
   personalityAttributes?: string[];
+  brandConsistencyElements?: string[];
   userProfileMetrics?: {
     profilePicture?: string;
     bio?: string;

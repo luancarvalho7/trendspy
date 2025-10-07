@@ -20,6 +20,7 @@ import PublicPerceptionForm from './components/PublicPerceptionForm';
 import EmotionalBenefitsForm from './components/EmotionalBenefitsForm';
 import ReasonsToBelieveForm from './components/ReasonsToBelieveForm';
 import PersonalityAttributesForm from './components/PersonalityAttributesForm';
+import BrandConsistencyForm from './components/BrandConsistencyForm';
 
 export const formConfig: FormStep[] = [
   {
@@ -243,10 +244,20 @@ export const formConfig: FormStep[] = [
     component: PersonalityAttributesForm,
     title: 'Personality Attributes Question',
     nextStepLogic: (formData: FormData) => {
-      // End of current form flow after personality attributes
-      return null;
+      // After personality attributes, go to brand consistency (final step)
+      return 'brand_consistency';
     },
     prevStepId: 'reasons_to_believe'
+  },
+  {
+    id: 'brand_consistency',
+    component: BrandConsistencyForm,
+    title: 'Brand Consistency Question',
+    nextStepLogic: (formData: FormData) => {
+      // End of form flow - this is the final step
+      return null;
+    },
+    prevStepId: 'personality_attributes'
   }
 ];
 
