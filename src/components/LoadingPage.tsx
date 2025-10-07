@@ -33,14 +33,14 @@ export default function LoadingPage({ formData, onComplete }: LoadingPageProps) 
   ]);
 
   const microCopyTexts = [
-    "Parsing self-report for inconsistencies…",
-    "Cross-referencing weight patterns with age cohort…",
-    "Analyzing sleep fragmentation biomarkers…",
-    "Processing hormonal exposure coefficients…",
-    "Correlating stress markers with cardiovascular load…",
-    "Computing biological age differential matrix…",
-    "Calibrating longevity risk algorithms…",
-    "Synthesizing multi-dimensional health profile…"
+    "Identificando padrões de engagement dos competidores…",
+    "Analisando frequência de postagens e horários…",
+    "Mapeando estratégias de hashtags utilizadas…",
+    "Processando dados de audiência e segmentação…",
+    "Correlacionando métricas de performance do nicho…",
+    "Computando matriz de oportunidades de conteúdo…",
+    "Calibrando algoritmos de detecção de tendências…",
+    "Sintetizando perfil estratégico personalizado…"
   ];
 
   useEffect(() => {
@@ -246,7 +246,7 @@ export default function LoadingPage({ formData, onComplete }: LoadingPageProps) 
           {/* Top Line */}
           <div className="text-center">
             <h1 className="text-xl font-semibold text-gray-900 font-outfit tracking-wide">
-              Analyzing biomarkers…
+              Processando dados…
             </h1>
           </div>
 
