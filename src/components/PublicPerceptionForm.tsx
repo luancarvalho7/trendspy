@@ -6,34 +6,13 @@ export default function PublicPerceptionForm({ onContinue, formData }: FormStepP
   const [selectedPerception, setSelectedPerception] = useState(formData?.publicPerception || '');
 
   const perceptions = [
-    {
-      title: 'Desconhecimento',
-      description: 'O público em geral não sabe ou entende pouco sobre a marca/solução (necessário educar sobre a oferta e seus benefícios)'
-    },
-    {
-      title: 'Ceticismo',
-      description: 'Há desconfiança ou receio – os clientes estão resistentes, seja por experiências ruins com concorrentes ou por parecer "bom demais para ser verdade" (precisa construir credibilidade)'
-    },
-    {
-      title: 'Insatisfação Latente',
-      description: 'O público sente dor com as opções atuais – reconhece problemas/não está satisfeito com os concorrentes, mas talvez não conheça alternativa melhor ainda (oportunidade para posicionar-se como solução ideal)'
-    },
-    {
-      title: 'Satisfeito com Concorrente',
-      description: 'Os clientes-alvo já estão servidos por uma opção e relativamente satisfeitos/leais a ela (será preciso diferenciar-se fortemente e mostrar vantagens claras para rompê-los da inércia)'
-    },
-    {
-      title: 'Sensível a Preço',
-      description: 'Muitos veem soluções atuais como caras ou fora de alcance; buscam opção mais acessível (posicionar valor acessível/benefício de custo)'
-    },
-    {
-      title: 'Consciente e Exigente',
-      description: 'O público entende bem o problema e sabe o que quer; eles comparam criticamente qualidade/funcionalidades (a marca precisa provar superioridade específica)'
-    },
-    {
-      title: 'Entusiastas da Marca (caso já tenha clientes)',
-      description: 'Existe uma base fiel que adora a marca; eles percebem-na muito positivamente (aproveitar esse capital para ampliar mensagem – reforçar aquilo que já amam)'
-    }
+    'Desconhecimento',
+    'Ceticismo',
+    'Insatisfação Latente',
+    'Satisfeito com Concorrente',
+    'Sensível a Preço',
+    'Consciente e Exigente',
+    'Entusiastas da Marca (caso já tenha clientes)'
   ];
 
   const handlePerceptionSelection = (perception: string) => {
@@ -67,26 +46,19 @@ export default function PublicPerceptionForm({ onContinue, formData }: FormStepP
           </div>
 
           {/* Perception Options */}
-          <div className="flex-1 space-y-3 pb-20 max-h-96 overflow-y-auto pr-2">
+          <div className="flex-1 space-y-3 pb-20">
             {perceptions.map((perception) => (
               <button
-                key={perception.title}
+                key={perception}
                 type="button"
-                onClick={() => handlePerceptionSelection(perception.title)}
-                className={`w-full p-4 text-left rounded-2xl border-2 transition-all duration-200 font-outfit ${
-                  selectedPerception === perception.title
+                onClick={() => handlePerceptionSelection(perception)}
+                className={`w-full py-4 px-6 text-base rounded-2xl border-2 transition-all duration-200 font-outfit text-left ${
+                  selectedPerception === perception
                     ? 'border-accent bg-accent/5 text-accent'
                     : 'border-gray-200 bg-white text-gray-900 hover:border-accent hover:bg-gray-50'
                 }`}
               >
-                <div className="space-y-2">
-                  <div className="font-semibold text-base">
-                    {perception.title}
-                  </div>
-                  <div className="text-sm text-gray-600 leading-relaxed">
-                    {perception.description}
-                  </div>
-                </div>
+                {perception}
               </button>
             ))}
           </div>
