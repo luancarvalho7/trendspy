@@ -12,6 +12,7 @@ import MainObjectiveForm from './components/MedicalConditionsForm';
 import Phase1LoadingPage from './components/Phase1LoadingPage';
 import MissionSelectionForm from './components/MissionSelectionForm';
 import CoreValuesForm from './components/CoreValuesForm';
+import CompetitiveDifferentialsForm from './components/CompetitiveDifferentialsForm';
 
 export const formConfig: FormStep[] = [
   {
@@ -155,10 +156,20 @@ export const formConfig: FormStep[] = [
     component: CoreValuesForm,
     title: 'Core Values Selection',
     nextStepLogic: (formData: FormData) => {
-      // End of current form flow after core values selection
-      return null;
+      // After core values, go to competitive differentials
+      return 'competitive_differentials';
     },
     prevStepId: 'mission_selection'
+  },
+  {
+    id: 'competitive_differentials',
+    component: CompetitiveDifferentialsForm,
+    title: 'Competitive Differentials Selection',
+    nextStepLogic: (formData: FormData) => {
+      // End of current form flow after competitive differentials selection
+      return null;
+    },
+    prevStepId: 'core_values'
   }
 ];
 

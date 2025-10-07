@@ -51,6 +51,7 @@ export interface FormData {
   lonelinessFactors?: string[];
   brandMissions?: string[];
   coreValues?: string[];
+  competitiveDifferentials?: string[];
   userProfileMetrics?: {
     profilePicture?: string;
     bio?: string;
