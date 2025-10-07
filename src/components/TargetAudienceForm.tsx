@@ -7,21 +7,21 @@ export default function TargetAudienceForm({ onContinue, formData }: FormStepPro
 
   const audiences = [
     // B2C Options
-    { category: 'B2C', name: 'Jovens Adultos Urbanos' },
-    { category: 'B2C', name: 'Famílias e Pais/Mães' },
-    { category: 'B2C', name: 'Adolescentes / Geração Z' },
-    { category: 'B2C', name: 'Profissionais em Início de Carreira' },
-    { category: 'B2C', name: 'Classe Alta / Público Premium' },
-    { category: 'B2C', name: 'Nichos de Interesse Específico' },
-    { category: 'B2C', name: 'Seniors da Melhor Idade' },
+    { category: 'B2C', name: 'Jovens Adultos Urbanos', description: '18–30 anos, conectados digitalmente, adotantes rápidos de novidades' },
+    { category: 'B2C', name: 'Famílias e Pais/Mães', description: 'adultos 30–50 com filhos, preocupados com conforto, segurança e economia para a família' },
+    { category: 'B2C', name: 'Adolescentes / Geração Z', description: 'público até ~20 anos, altamente engajado em tendências online, valoriza autenticidade e propósito' },
+    { category: 'B2C', name: 'Profissionais em Início de Carreira', description: '20–35 anos, buscando desenvolvimento profissional, networking e estilo de vida ativo' },
+    { category: 'B2C', name: 'Classe Alta / Público Premium', description: 'consumidores de alto poder aquisitivo, buscam produtos exclusivos, luxo, qualidade superior e status' },
+    { category: 'B2C', name: 'Nichos de Interesse Específico', description: 'entusiastas de um tema (ex: gamers, fitness, sustentabilidade, veganismo, arte/design) altamente engajados nessa paixão' },
+    { category: 'B2C', name: 'Seniors da Melhor Idade', description: 'acima de 60 anos, foco em saúde, conforto, atendimento confiável e fácil usabilidade' },
     
     // B2B Options  
-    { category: 'B2B', name: 'Pequenas e Médias Empresas' },
-    { category: 'B2B', name: 'Grandes Empresas / Corporativo' },
-    { category: 'B2B', name: 'Startups e Empresas Inovadoras' },
-    { category: 'B2B', name: 'Setor Público/Instituições' },
-    { category: 'B2B', name: 'Por Área de Atuação' },
-    { category: 'B2B', name: 'Decisores e Personas Específicas' }
+    { category: 'B2B', name: 'Pequenas e Médias Empresas', description: 'negócios de menor porte que buscam soluções acessíveis e práticas para crescer' },
+    { category: 'B2B', name: 'Grandes Empresas / Corporativo', description: 'organizações de grande porte que exigem soluções escaláveis, robustas, com alto nível de serviço e customização' },
+    { category: 'B2B', name: 'Startups e Empresas Inovadoras', description: 'negócios emergentes, focados em rapidez e inovação, abertos a novas soluções para ganhar vantagem' },
+    { category: 'B2B', name: 'Setor Público/Instituições', description: 'órgãos governamentais, ONGs ou instituições que valorizam confiabilidade, compliance e impacto social' },
+    { category: 'B2B', name: 'Por Área de Atuação', description: 'empresas de um setor específico (ex: indústria automotiva, setor saúde, comércio varejista)' },
+    { category: 'B2B', name: 'Decisores e Personas Específicas', description: 'em contexto B2B, quem dentro da empresa é o foco? (ex: "Diretores de TI em empresas financeiras", "Equipe de RH de indústrias")' }
   ];
 
   const handleAudienceToggle = (audienceName: string) => {
@@ -90,6 +90,7 @@ export default function TargetAudienceForm({ onContinue, formData }: FormStepPro
                             ? 'bg-accent text-white'
                             : 'bg-gray-100 text-gray-700 hover:bg-accent hover:text-white'
                         }`}
+                        title={audience.description}
                       >
                         {audience.name}
                       </button>
@@ -117,6 +118,7 @@ export default function TargetAudienceForm({ onContinue, formData }: FormStepPro
                             ? 'bg-accent text-white'
                             : 'bg-gray-100 text-gray-700 hover:bg-accent hover:text-white'
                         }`}
+                        title={audience.description}
                       >
                         {audience.name}
                       </button>
