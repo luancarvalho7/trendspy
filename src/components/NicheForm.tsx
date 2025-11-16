@@ -343,7 +343,6 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
                               </>
                             ) : (
                               <>
-
                                 <button
                                   type="button"
                                   onClick={() => handleRemoveNiche(index)}
