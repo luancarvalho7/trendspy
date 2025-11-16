@@ -38,7 +38,7 @@ export default function BrandConsistencyForm({ onContinue, formData }: FormStepP
       
       // Redirect to external URL after a brief delay
       setTimeout(() => {
-        window.location.href = 'https://workeztrends.netlify.app/';
+        window.location.href = 'https://carrossel-de-cria-bolt.vercel.app/';
       }, 500);
     }
   };
