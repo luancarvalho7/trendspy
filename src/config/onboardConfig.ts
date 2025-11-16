@@ -4,6 +4,7 @@ import PasswordForm from '../components/PasswordForm';
 import SocialNetworkTypeForm from '../components/SocialNetworkTypeForm';
 import InstagramHandleForm from '../components/InstagramHandleForm';
 import InstagramConfirmationForm from '../components/InstagramConfirmationForm';
+import LinkedinHandleForm from '../components/LinkedinHandleForm';
 import WebsiteLinkForm from '../components/WebsiteLinkForm';
 import NicheForm from '../components/NicheForm';
 import ProfileMonitoringForm from '../components/ProfileMonitoringForm';
@@ -57,9 +58,18 @@ export const onboardConfig: FormStep[] = [
       if (formData.goBackToInstagramHandle) {
         return 'instagram_handle';
       }
-      return 'has_website';
+      return 'linkedin_handle';
     },
     prevStepId: 'instagram_handle'
+  },
+  {
+    id: 'linkedin_handle',
+    component: LinkedinHandleForm,
+    title: 'LinkedIn Handle Question',
+    nextStepLogic: (formData: FormData) => {
+      return 'has_website';
+    },
+    prevStepId: 'instagram_confirmation'
   },
   {
     id: 'has_website',
@@ -74,7 +84,7 @@ export const onboardConfig: FormStep[] = [
         return 'niches';
       }
     },
-    prevStepId: 'instagram_confirmation'
+    prevStepId: 'linkedin_handle'
   },
   {
     id: 'website_link',
