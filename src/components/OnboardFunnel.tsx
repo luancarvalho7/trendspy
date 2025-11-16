@@ -72,7 +72,7 @@ export default function OnboardFunnel() {
   // Handle completion of phase 1 loading animation
   const handlePhase1LoadingComplete = () => {
     // Redirect to external login URL
-    window.location.href = 'https://workeztrends.netlify.app/login';
+    window.location.href = 'https://carrossel-de-cria-bolt.vercel.app';
   };
 
   // Handle back navigation
