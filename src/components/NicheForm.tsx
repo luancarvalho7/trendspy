@@ -44,8 +44,8 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
           console.log('Niches response:', responseData);
           
           // Extract niches from response
-          if (Array.isArray(responseData) && responseData.length > 0 && responseData[0].niches) {
-            setAvailableNiches(responseData[0].niches);
+          if (responseData && responseData.niches && Array.isArray(responseData.niches)) {
+            setAvailableNiches(responseData.niches);
           } else {
             // Fallback niches if webhook fails
             setAvailableNiches([
