@@ -1,5 +1,6 @@
 import { FormStep, FormData } from '../types/form';
 import AccountNameForm from '../components/AccountNameForm';
+import PasswordForm from '../components/PasswordForm';
 import SocialNetworkTypeForm from '../components/SocialNetworkTypeForm';
 import InstagramHandleForm from '../components/InstagramHandleForm';
 import InstagramConfirmationForm from '../components/InstagramConfirmationForm';
@@ -17,8 +18,17 @@ export const onboardConfig: FormStep[] = [
     component: AccountNameForm,
     title: 'Account Name Question',
     nextStepLogic: (formData: FormData) => {
-      return 'social_network_type';
+      return 'password';
     }
+  },
+  {
+    id: 'password',
+    component: PasswordForm,
+    title: 'Password Question',
+    nextStepLogic: (formData: FormData) => {
+      return 'social_network_type';
+    },
+    prevStepId: 'account_name'
   },
   {
     id: 'social_network_type',
@@ -27,7 +37,7 @@ export const onboardConfig: FormStep[] = [
     nextStepLogic: (formData: FormData) => {
       return 'instagram_handle';
     },
-    prevStepId: 'account_name'
+    prevStepId: 'password'
   },
   {
     id: 'instagram_handle',

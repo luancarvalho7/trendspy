@@ -6,6 +6,7 @@ export interface Niche {
 
 export interface FormData {
   age?: string;
+  password?: string;
   sex?: string; // Keep for backward compatibility
   niches?: Niche[];
   profileMonitoring?: string;
