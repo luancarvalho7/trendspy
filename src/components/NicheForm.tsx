@@ -3,6 +3,12 @@ import Logo from './Logo';
 import { FormStepProps, Niche } from '../types/form';
 
 export default function NicheForm({ onContinue, formData }: FormStepProps) {
+  // State for fetching niches from webhook
+  const [availableNiches, setAvailableNiches] = useState<string[]>([]);
+  const [isLoadingNiches, setIsLoadingNiches] = useState(true);
+  const [showOtherInput, setShowOtherInput] = useState(false);
+  const [customNiche, setCustomNiche] = useState('');
+  
   // Check if we have niches from website analysis, otherwise use existing niches
   const getInitialNiches = () => {
     if (formData?.niches && formData.niches.length > 0) {
@@ -18,10 +24,57 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
   };
   
   const [niches, setNiches] = useState<Niche[]>(getInitialNiches());
-
-  const [currentNiche, setCurrentNiche] = useState('');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingValue, setEditingValue] = useState('');
+
+  // Fetch niches from webhook on component mount
+  useEffect(() => {
+    const fetchNiches = async () => {
+      try {
+        setIsLoadingNiches(true);
+        const response = await fetch('https://webhook.workez.online/webhook/getNiches', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+
+        if (response.ok) {
+          const responseData = await response.json();
+          console.log('Niches response:', responseData);
+          
+          // Extract niches from response
+          if (Array.isArray(responseData) && responseData.length > 0 && responseData[0].niches) {
+            setAvailableNiches(responseData[0].niches);
+          } else {
+            // Fallback niches if webhook fails
+            setAvailableNiches([
+              'Tecnologia', 'Marketing Digital', 'Finanças', 'Saúde e Bem-estar', 
+              'Educação', 'Lifestyle', 'Negócios', 'Design', 'Fotografia'
+            ]);
+          }
+        } else {
+          console.error('Failed to fetch niches:', response.status);
+          // Fallback niches
+          setAvailableNiches([
+            'Tecnologia', 'Marketing Digital', 'Finanças', 'Saúde e Bem-estar', 
+            'Educação', 'Lifestyle', 'Negócios', 'Design', 'Fotografia'
+          ]);
+        }
+      } catch (error) {
+        console.error('Error fetching niches:', error);
+        // Fallback niches
+        setAvailableNiches([
+          'Tecnologia', 'Marketing Digital', 'Finanças', 'Saúde e Bem-estar', 
+          'Educação', 'Lifestyle', 'Negócios', 'Design', 'Fotografia'
+        ]);
+      } finally {
+        setIsLoadingNiches(false);
+      }
+    };
+
+    fetchNiches();
+  }, []);
 
   // React to formData changes (e.g., when coming from website analysis)
   useEffect(() => {
@@ -31,11 +84,24 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
     }
   }, [formData]);
 
-  const handleAddNiche = () => {
-    const trimmedNiche = currentNiche.trim();
+  const handleSelectNiche = (selectedNiche: string) => {
+    if (selectedNiche === 'Outro') {
+      setShowOtherInput(true);
+      return;
+    }
+    
+    // Check if already selected
+    if (!niches.some(n => n.text === selectedNiche) && niches.length < 6) {
+      setNiches([...niches, { text: selectedNiche, type: 'manualAdded' }]);
+    }
+  };
+
+  const handleAddCustomNiche = () => {
+    const trimmedNiche = customNiche.trim();
     if (trimmedNiche && !niches.some(n => n.text === trimmedNiche) && niches.length < 6) {
       setNiches([...niches, { text: trimmedNiche, type: 'manualAdded' }]);
-      setCurrentNiche('');
+      setCustomNiche('');
+      setShowOtherInput(false);
     }
   };
 
@@ -73,6 +139,17 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
     setEditingValue('');
   };
 
+  const handleCustomNicheKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddCustomNiche();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      setShowOtherInput(false);
+      setCustomNiche('');
+    }
+  };
+
   const handleEditKeyPress = (e: React.KeyboardEvent, index: number) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -87,13 +164,6 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
     const value = e.target.value;
     if (value.length <= 50) {
       setEditingValue(value);
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleAddNiche();
     }
   };
 
@@ -133,33 +203,82 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
 
           {/* Input Field */}
           <div className="mb-6">
-            <div className="flex space-x-2">
-              <input
-                type="text"
-                value={currentNiche}
-                onChange={(e) => setCurrentNiche(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="flex-1 px-4 py-3 text-lg text-gray-900 bg-white border-2 border-[#CFCFCF] rounded-2xl transition-all duration-200 font-outfit focus:outline-none focus:border-accent hover:border-accent placeholder-gray-400"
-                placeholder="Ex: Tecnologia, Lifestyle, Negócios..."
-                maxLength={50}
-                disabled={niches.length >= 6}
-              />
-              <button
-                type="button"
-                onClick={handleAddNiche}
-                disabled={!currentNiche.trim() || niches.some(n => n.text === currentNiche.trim()) || niches.length >= 6}
-                className={`px-6 py-3 rounded-2xl font-medium transition-all duration-200 ${
-                  currentNiche.trim() && !niches.some(n => n.text === currentNiche.trim()) && niches.length < 6
-                    ? 'bg-accent text-white hover:bg-accent/90'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                }`}
-              >
-                +
-              </button>
-            </div>
+            {isLoadingNiches ? (
+              <div className="w-full py-8 text-center">
+                <div className="inline-flex items-center space-x-3">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-accent"></div>
+                  <span className="text-base text-gray-600 font-outfit">
+                    Carregando nichos...
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <>
+                <select
+                  onChange={(e) => handleSelectNiche(e.target.value)}
+                  disabled={niches.length >= 6}
+                  className="w-full px-4 py-3 text-lg text-gray-900 bg-white border-2 border-[#CFCFCF] rounded-2xl transition-all duration-200 font-outfit focus:outline-none focus:border-accent hover:border-accent"
+                  value=""
+                >
+                  <option value="" disabled>
+                    {niches.length >= 6 ? 'Limite máximo atingido' : 'Selecione um nicho'}
+                  </option>
+                  {availableNiches.map((niche, index) => (
+                    <option
+                      key={index}
+                      value={niche}
+                      disabled={niches.some(n => n.text === niche)}
+                    >
+                      {niche} {niches.some(n => n.text === niche) ? '(já selecionado)' : ''}
+                    </option>
+                  ))}
+                  <option value="Outro">Outro</option>
+                </select>
+
+                {/* Custom niche input */}
+                {showOtherInput && (
+                  <div className="mt-4">
+                    <div className="flex space-x-2">
+                      <input
+                        type="text"
+                        value={customNiche}
+                        onChange={(e) => setCustomNiche(e.target.value)}
+                        onKeyPress={handleCustomNicheKeyPress}
+                        className="flex-1 px-4 py-3 text-lg text-gray-900 bg-white border-2 border-[#CFCFCF] rounded-2xl transition-all duration-200 font-outfit focus:outline-none focus:border-accent hover:border-accent placeholder-gray-400"
+                        placeholder="Digite seu nicho personalizado"
+                        maxLength={50}
+                        autoFocus
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddCustomNiche}
+                        disabled={!customNiche.trim() || niches.some(n => n.text === customNiche.trim())}
+                        className={`px-6 py-3 rounded-2xl font-medium transition-all duration-200 ${
+                          customNiche.trim() && !niches.some(n => n.text === customNiche.trim())
+                            ? 'bg-accent text-white hover:bg-accent/90'
+                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        }`}
+                      >
+                        +
+                      </button>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowOtherInput(false);
+                        setCustomNiche('');
+                      }}
+                      className="mt-2 text-sm text-gray-500 hover:text-gray-700"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
-          {/* Added Niches */}
+          {/* Selected Niches */}
           <div className="flex-1">
             {niches.length > 0 && (
               <div className="space-y-3">
@@ -253,11 +372,11 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
           </div>
 
           {/* Bottom Section with Continue Button */}
-          <div className="fixed bottom-[50px] left-0 right-0 px-6 max-w-sm mx-auto w-full">
+          <div className="pt-6 pb-8">
             <button
               type="submit"
               disabled={!isValidToSubmit}
-              className={`w-full py-4 px-6 rounded-full font-medium text-white text-lg transition-all duration-200 font-outfit ${
+              className={`w-full py-3 px-6 rounded-full font-medium text-white text-base transition-all duration-200 font-outfit ${
                 isValidToSubmit
                   ? 'bg-black hover:bg-gray-800 active:scale-95'
                   : 'bg-gray-300 cursor-not-allowed'
