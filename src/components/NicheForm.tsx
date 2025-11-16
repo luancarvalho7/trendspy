@@ -343,14 +343,7 @@ export default function NicheForm({ onContinue, formData }: FormStepProps) {
                               </>
                             ) : (
                               <>
-                                <button
-                                  type="button"
-                                  onClick={() => handleEditNiche(index)}
-                                  className="text-blue-500 hover:text-blue-700 transition-colors p-1 text-sm"
-                                  title="Edit"
-                                >
-                                  ✏️
-                                </button>
+  
                                 <button
                                   type="button"
                                   onClick={() => handleRemoveNiche(index)}
