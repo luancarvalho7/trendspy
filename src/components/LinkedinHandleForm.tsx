@@ -58,15 +58,15 @@ export default function LinkedinHandleForm({ onContinue, formData }: FormStepPro
                 </svg>
               </div>
 
-              <input
-                type="text"
-                value={linkedinHandle}
-                onChange={handleLinkedinChange}
-                className="w-full pl-12 pr-4 py-4 text-lg text-gray-900 bg-white border-2 border-[#CFCFCF] rounded-2xl transition-all duration-200 font-outfit focus:outline-none focus:border-accent hover:border-accent placeholder-gray-400"
-                maxLength={50}
-                autoFocus
-                placeholder="seu-perfil-linkedin"
-              />
+<input
+  type="text"
+  value={linkedinHandle}
+  onChange={handleLinkedinChange}
+  className="w-full pl-16 pr-4 py-4 text-lg text-gray-900 bg-white border-2 border-[#CFCFCF] rounded-2xl transition-all duration-200 font-outfit focus:outline-none focus:border-accent hover:border-accent placeholder-gray-400"
+  maxLength={50}
+  autoFocus
+  placeholder="seu-perfil-linkedin"
+/>
             </div>
           </div>
 
