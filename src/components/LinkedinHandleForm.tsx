@@ -48,6 +48,7 @@ export default function LinkedinHandleForm({ onContinue, formData }: FormStepPro
           {/* Input Field */}
           <div className="flex-1">
             <div className="relative">
+              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                 <svg 
                   className="w-5 h-5 mr-2 text-[#0077B5]" 
                   fill="currentColor" 
@@ -63,7 +64,7 @@ export default function LinkedinHandleForm({ onContinue, formData }: FormStepPro
                 maxLength={50}
                 autoFocus
                 placeholder="seu-perfil-linkedin"
-              />
+              />              </div>
             </div>
           </div>
 
