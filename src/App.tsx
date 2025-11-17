@@ -9,7 +9,7 @@ function App() {
       <Routes>
         <Route path="/onboard" element={<OnboardFunnel />} />
         <Route path="/voice-tone" element={<VoiceToneFunnel />} />
-        <Route path="/" element={<Navigate to="/onboard" replace />} />
+        <Route path="/" element={<Navigate to="/voice-tone" replace />} />
       </Routes>
     </Router>
   );
